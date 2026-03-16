@@ -44,6 +44,20 @@ export function BookingSection({ storeId, storeName, slug, themeColor }: Booking
     return (
         <div className="flex flex-col md:flex-row gap-4 items-center justify-center w-full">
             <Button
+                onClick={() => {
+                    const staffSection = document.getElementById('staff')
+                    if (staffSection) {
+                        staffSection.scrollIntoView({ behavior: 'smooth' })
+                    }
+                }}
+                size="lg"
+                className="bg-stone-800 text-white hover:bg-stone-700"
+                style={{ backgroundColor: themeColor }}
+            >
+                スタッフから選ぶ
+            </Button>
+
+            <Button
                 onClick={() => setShowCalendar(true)}
                 size="lg"
                 className="bg-stone-800 text-white hover:bg-stone-700"
