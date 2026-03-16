@@ -1,0 +1,59 @@
+
+> starpay-grow-clone@0.1.0 build
+> next build
+
+笆ｲ Next.js 16.1.6 (Turbopack)
+- Environments: .env.local
+
+  Creating an optimized production build ...
+
+> Build error occurred
+Error: Turbopack build failed with 3 errors:
+./src/app/dashboard/loading.tsx:1:1
+Module not found: Can't resolve '@/components/ui/skeleton'
+> 1 | import { Skeleton } from "@/components/ui/skeleton"
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  2 |
+  3 | export default function DashboardLoading() {
+  4 |     return (
+
+Import map: aliased to relative './src/components/ui/skeleton' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./src/app/mypage/loading.tsx:1:1
+Module not found: Can't resolve '@/components/ui/skeleton'
+> 1 | import { Skeleton } from "@/components/ui/skeleton"
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  2 | import { Card, CardHeader, CardContent } from "@/components/ui/card"
+  3 |
+  4 | export default function MyPageLoading() {
+
+Import map: aliased to relative './src/components/ui/skeleton' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./src/app/store/[slug]/loading.tsx:1:1
+Module not found: Can't resolve '@/components/ui/skeleton'
+> 1 | import { Skeleton } from "@/components/ui/skeleton"
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  2 |
+  3 | export default function StoreLoading() {
+  4 |     return (
+
+Import map: aliased to relative './src/components/ui/skeleton' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+    at <unknown> (./src/app/dashboard/loading.tsx:1:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./src/app/mypage/loading.tsx:1:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./src/app/store/[slug]/loading.tsx:1:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
