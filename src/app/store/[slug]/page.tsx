@@ -91,13 +91,25 @@ export default async function StorePublicPage(props: { params: Promise<{ slug: s
     const welcomeMessage = theme.welcomeMessage || ''
     const heroTagline = theme.heroTagline || '極上の癒やしと非日常の空間へ'
 
+    // Customizable colors from theme_config
+    const bgColor = theme.bgColor || '#0a0a0a'
+    const bgImage = theme.bgImage || ''
+    const sectionBgColor = theme.sectionBgColor || '#09090b'
+    const headerBgColor = theme.headerBgColor || '#000000'
+    const cardBgColor = theme.cardBgColor || '#000000'
+    const textColor = theme.textColor || '#d4d4d8'
+
     const newFaces = staffList.filter(s => s.is_new_face)
     const activeNews = newsList.filter(n => n.is_published).slice(0, 5)
 
     return (
-        <div className="min-h-screen bg-[#0a0a0a] text-zinc-300 font-sans selection:bg-amber-500/30">
+        <div className="min-h-screen font-sans selection:bg-amber-500/30 relative" style={{ backgroundColor: bgColor, color: textColor }}>
+            {bgImage && (
+                <div className="fixed inset-0 z-0 bg-cover bg-center bg-no-repeat opacity-10" style={{ backgroundImage: `url(${bgImage})` }} />
+            )}
+            <div className="relative z-10">
             {/* Header / Nav */}
-            <header className="fixed top-0 inset-x-0 z-50 bg-black/90 backdrop-blur-md border-b border-zinc-800">
+            <header className="fixed top-0 inset-x-0 z-50 backdrop-blur-md border-b border-white/10" style={{ backgroundColor: `${headerBgColor}e6` }}>
                 <div className="max-w-6xl mx-auto px-3 md:px-4 h-14 md:h-16 flex items-center justify-between">
                     <div className="flex items-center gap-2 md:gap-3">
                         {logoUrl && <img src={logoUrl} alt="Logo" className="h-8 w-8 md:h-10 md:w-10 rounded-full object-cover" />}
@@ -321,6 +333,7 @@ export default async function StorePublicPage(props: { params: Promise<{ slug: s
                         <span className="text-[10px] font-medium">出勤情報</span>
                     </Link>
                 </div>
+            </div>
             </div>
         </div>
     )

@@ -30,6 +30,12 @@ export function StorePageBuilder({ store }: StorePageBuilderProps) {
         welcomeMessage: existingConfig.welcomeMessage || '',
         showTitle: existingConfig.showTitle !== false,
         heroTagline: existingConfig.heroTagline || '極上の癒やしと非日常の空間へ',
+        bgColor: existingConfig.bgColor || '#0a0a0a',
+        bgImage: existingConfig.bgImage || '',
+        sectionBgColor: existingConfig.sectionBgColor || '#09090b',
+        headerBgColor: existingConfig.headerBgColor || '#000000',
+        cardBgColor: existingConfig.cardBgColor || '#000000',
+        textColor: existingConfig.textColor || '#d4d4d8',
         about: existingConfig.about || {
             title: '私たちについて',
             content: '',
@@ -55,6 +61,12 @@ export function StorePageBuilder({ store }: StorePageBuilderProps) {
                     welcomeMessage: designConfig.welcomeMessage,
                     showTitle: designConfig.showTitle,
                     heroTagline: designConfig.heroTagline,
+                    bgColor: designConfig.bgColor,
+                    bgImage: designConfig.bgImage,
+                    sectionBgColor: designConfig.sectionBgColor,
+                    headerBgColor: designConfig.headerBgColor,
+                    cardBgColor: designConfig.cardBgColor,
+                    textColor: designConfig.textColor,
                     about: designConfig.about,
                     gallery: designConfig.gallery.filter((img: any) => typeof img === 'string' && img.trim() !== ''),
                     seo: designConfig.seo,
@@ -102,6 +114,79 @@ export function StorePageBuilder({ store }: StorePageBuilderProps) {
                         />
                     </div>
                     <p className="text-xs text-muted-foreground">予約ボタンやハイライト部分のカラー。</p>
+                </div>
+
+                {/* Background Customization */}
+                <div className="border-t pt-4 space-y-4">
+                    <h3 className="font-bold text-base">背景・カラー設定</h3>
+                    
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="grid gap-1.5">
+                            <Label className="text-sm">ページ背景色</Label>
+                            <div className="flex gap-2">
+                                <Input type="color" value={designConfig.bgColor} onChange={(e) => setDesignConfig({ ...designConfig, bgColor: e.target.value })} className="w-10 h-9 p-0.5" />
+                                <Input value={designConfig.bgColor} onChange={(e) => setDesignConfig({ ...designConfig, bgColor: e.target.value })} className="flex-1 text-xs" />
+                            </div>
+                        </div>
+                        <div className="grid gap-1.5">
+                            <Label className="text-sm">セクション背景色</Label>
+                            <div className="flex gap-2">
+                                <Input type="color" value={designConfig.sectionBgColor} onChange={(e) => setDesignConfig({ ...designConfig, sectionBgColor: e.target.value })} className="w-10 h-9 p-0.5" />
+                                <Input value={designConfig.sectionBgColor} onChange={(e) => setDesignConfig({ ...designConfig, sectionBgColor: e.target.value })} className="flex-1 text-xs" />
+                            </div>
+                        </div>
+                        <div className="grid gap-1.5">
+                            <Label className="text-sm">ヘッダー背景色</Label>
+                            <div className="flex gap-2">
+                                <Input type="color" value={designConfig.headerBgColor} onChange={(e) => setDesignConfig({ ...designConfig, headerBgColor: e.target.value })} className="w-10 h-9 p-0.5" />
+                                <Input value={designConfig.headerBgColor} onChange={(e) => setDesignConfig({ ...designConfig, headerBgColor: e.target.value })} className="flex-1 text-xs" />
+                            </div>
+                        </div>
+                        <div className="grid gap-1.5">
+                            <Label className="text-sm">カード背景色</Label>
+                            <div className="flex gap-2">
+                                <Input type="color" value={designConfig.cardBgColor} onChange={(e) => setDesignConfig({ ...designConfig, cardBgColor: e.target.value })} className="w-10 h-9 p-0.5" />
+                                <Input value={designConfig.cardBgColor} onChange={(e) => setDesignConfig({ ...designConfig, cardBgColor: e.target.value })} className="flex-1 text-xs" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="grid gap-1.5">
+                        <Label className="text-sm">テキストカラー</Label>
+                        <div className="flex gap-2">
+                            <Input type="color" value={designConfig.textColor} onChange={(e) => setDesignConfig({ ...designConfig, textColor: e.target.value })} className="w-10 h-9 p-0.5" />
+                            <Input value={designConfig.textColor} onChange={(e) => setDesignConfig({ ...designConfig, textColor: e.target.value })} className="flex-1" />
+                        </div>
+                    </div>
+
+                    <div className="grid gap-2">
+                        <Label className="text-sm">背景画像（任意）</Label>
+                        <ImageUpload
+                            value={designConfig.bgImage}
+                            onChange={(url) => setDesignConfig({ ...designConfig, bgImage: url })}
+                            onRemove={() => setDesignConfig({ ...designConfig, bgImage: '' })}
+                        />
+                        <p className="text-xs text-muted-foreground">ページ全体の背景に表示される画像。背景色の上にオーバーレイされます。</p>
+                    </div>
+
+                    {/* Quick presets */}
+                    <div className="grid gap-1.5">
+                        <Label className="text-sm">クイックプリセット</Label>
+                        <div className="flex gap-2 flex-wrap">
+                            <Button type="button" variant="outline" size="sm" className="text-xs" onClick={() => setDesignConfig({ ...designConfig, bgColor: '#0a0a0a', sectionBgColor: '#09090b', headerBgColor: '#000000', cardBgColor: '#000000', textColor: '#d4d4d8' })}>
+                                ダーク
+                            </Button>
+                            <Button type="button" variant="outline" size="sm" className="text-xs" onClick={() => setDesignConfig({ ...designConfig, bgColor: '#1a1a2e', sectionBgColor: '#16213e', headerBgColor: '#0f3460', cardBgColor: '#1a1a2e', textColor: '#e0e0e0' })}>
+                                ネイビー
+                            </Button>
+                            <Button type="button" variant="outline" size="sm" className="text-xs" onClick={() => setDesignConfig({ ...designConfig, bgColor: '#1c1917', sectionBgColor: '#1c1917', headerBgColor: '#0c0a09', cardBgColor: '#1c1917', textColor: '#d6d3d1' })}>
+                                ブラウン
+                            </Button>
+                            <Button type="button" variant="outline" size="sm" className="text-xs" onClick={() => setDesignConfig({ ...designConfig, bgColor: '#ffffff', sectionBgColor: '#f8f8f8', headerBgColor: '#ffffff', cardBgColor: '#ffffff', textColor: '#333333' })}>
+                                ライト
+                            </Button>
+                        </div>
+                    </div>
                 </div>
 
                 <div className="flex items-center space-x-2">
