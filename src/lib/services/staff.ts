@@ -2,6 +2,47 @@ import { createClient } from '@/lib/supabase/client'
 import { Staff } from '@/types/staff'
 
 export const staffService = {
+    async getStaffById(id: string, supabaseClient?: any) {
+        const supabase = supabaseClient || createClient()
+        const { data, error } = await supabase
+            .from('staff')
+            .select('*')
+            .eq('id', id)
+            .single()
+
+        if (error) throw new Error(error.message)
+
+        const s = data as any
+        return {
+            id: s.id,
+            storeId: s.store_id,
+            storeIds: [s.store_id],
+            name: s.name,
+            role: s.role,
+            bio: s.bio,
+            avatarUrl: s.avatar_url,
+            specialties: s.specialties,
+            serviceIds: s.service_ids || [],
+            instagram_url: s.instagram_url,
+            greeting_message: s.greeting_message,
+            years_of_experience: s.years_of_experience,
+            tags: s.tags,
+            images: s.images || [],
+            back_margin_rate: s.back_margin_rate,
+            user_id: s.user_id,
+            nomination_fee: s.nomination_fee,
+            age: s.age,
+            height: s.height,
+            bust: s.bust,
+            cup: s.cup,
+            waist: s.waist,
+            hip: s.hip,
+            class_rank: s.class_rank,
+            twitter_url: s.twitter_url,
+            is_new_face: s.is_new_face
+        } as Staff
+    },
+
     async getStaffByStoreId(storeId: string, supabaseClient?: any) {
         try {
             const supabase = supabaseClient || createClient()

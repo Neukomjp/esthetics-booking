@@ -364,8 +364,8 @@ function CastCard({ cast, slug, isNew = false }: { cast: Staff, slug: string, is
                 </div>
             )}
             
-            {/* Image */}
-            <div className="aspect-[3/4] relative overflow-hidden bg-zinc-900">
+            {/* Image - clickable to detail */}
+            <Link href={`/store/${slug}/cast/${cast.id}`} className="block aspect-[3/4] relative overflow-hidden bg-zinc-900">
                 {mainImage ? (
                     <img 
                         src={mainImage} 
@@ -396,7 +396,7 @@ function CastCard({ cast, slug, isNew = false }: { cast: Staff, slug: string, is
                         </span>
                     </div>
                 </div>
-            </div>
+            </Link>
 
             {/* Card Body */}
             <div className="p-2 md:p-4 flex-1 flex flex-col">
