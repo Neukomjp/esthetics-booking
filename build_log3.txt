@@ -1,0 +1,66 @@
+笞 `eslint` configuration in next.config.ts is no longer supported. See more info here: https://nextjs.org/docs/app/api-reference/cli/next#next-lint-options
+笞 Invalid next.config.ts options detected: 
+笞     Unrecognized key(s) in object: 'eslint'
+笞 See more info here: https://nextjs.org/docs/messages/invalid-next-config
+笆ｲ Next.js 16.1.6 (Turbopack)
+- Environments: .env.local
+
+  Creating an optimized production build ...
+笨・Compiled successfully in 4.8s
+  Skipping validation of types
+  Collecting page data using 15 workers ...
+笞・・STRIPE_SECRET_KEY is missing. Stripe features will fail at runtime. Please set it in your .env.local file.
+笞・・STRIPE_SECRET_KEY is missing. Stripe features will fail at runtime. Please set it in your .env.local file.
+笞・・STRIPE_SECRET_KEY is missing. Stripe features will fail at runtime. Please set it in your .env.local file.
+  Generating static pages using 15 workers (0/32) ...
+笞・・STRIPE_SECRET_KEY is missing. Stripe features will fail at runtime. Please set it in your .env.local file.
+  Generating static pages using 15 workers (8/32) 
+  Generating static pages using 15 workers (16/32) 
+  Generating static pages using 15 workers (24/32) 
+笨・Generating static pages using 15 workers (32/32) in 373.2ms
+  Finalizing page optimization ...
+
+Route (app)
+笏・笳・/
+笏・笳・/_not-found
+笏・笳・/admin
+笏・笳・/admin/organizations
+笏・笳・/admin/settings
+笏・笳・/admin/users
+笏・ﾆ・/api/checkout_sessions
+笏・ﾆ・/api/send-email
+笏・ﾆ・/api/stripe/callback
+笏・ﾆ・/api/stripe/connect
+笏・ﾆ・/api/webhooks/stripe
+笏・ﾆ・/auth/callback
+笏・ﾆ・/dashboard
+笏・ﾆ・/dashboard/bookings
+笏・ﾆ・/dashboard/coupons
+笏・ﾆ・/dashboard/coupons/new
+笏・ﾆ・/dashboard/customers
+笏・ﾆ・/dashboard/customers/[id]
+笏・ﾆ・/dashboard/customers/new
+笏・ﾆ・/dashboard/payments
+笏・ﾆ・/dashboard/settings
+笏・ﾆ・/dashboard/staff
+笏・ﾆ・/dashboard/stores
+笏・ﾆ・/dashboard/stores/[id]
+笏・ﾆ・/dashboard/stores/new
+笏・笳・/login
+笏・笳・/login/customer
+笏・笳・/mypage
+笏・笳・/onboarding
+笏・笳・/reset-password
+笏・笳・/reset-password/customer
+笏・笳・/signup
+笏・笳・/signup/customer
+笏・ﾆ・/store/[slug]
+笏・ﾆ・/store/[slug]/thanks
+笏・笳・/update-password
+
+
+ﾆ・Proxy (Middleware)
+
+笳・ (Static)   prerendered as static content
+ﾆ・ (Dynamic)  server-rendered on demand
+

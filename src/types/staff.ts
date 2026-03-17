@@ -12,6 +12,19 @@ export type Staff = {
     greeting_message?: string
     years_of_experience?: number
     tags?: string[]
+    images?: string[] // Up to 15 images
+    back_margin_rate?: number
+    user_id?: string
+    nomination_fee?: number
+    age?: number
+    height?: number
+    bust?: number
+    cup?: string
+    waist?: number
+    hip?: number
+    class_rank?: string
+    twitter_url?: string
+    is_new_face?: boolean
 }
 
 export type Service = {

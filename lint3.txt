@@ -3,69 +3,9 @@
 > eslint
 
 
-C:\Users\zjkdf\莠育ｴ・す繧ｹ繝・Β\esthetics-booking\check_bookings.ts
-   3:26  error  A `require()` style import is forbidden  @typescript-eslint/no-require-imports
-  22:20  error  A `require()` style import is forbidden  @typescript-eslint/no-require-imports
-
-C:\Users\zjkdf\莠育ｴ・す繧ｹ繝・Β\esthetics-booking\check_dashboard_fetch.ts
-   3:26  error  A `require()` style import is forbidden   @typescript-eslint/no-require-imports
-  36:26  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
-
-C:\Users\zjkdf\莠育ｴ・す繧ｹ繝・Β\esthetics-booking\check_db_bookings.ts
-   3:26  error  A `require()` style import is forbidden   @typescript-eslint/no-require-imports
-  26:26  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
-
-C:\Users\zjkdf\莠育ｴ・す繧ｹ繝・Β\esthetics-booking\check_rls.ts
-   3:26  error  A `require()` style import is forbidden   @typescript-eslint/no-require-imports
-  14:52  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
-
-C:\Users\zjkdf\莠育ｴ・す繧ｹ繝・Β\esthetics-booking\check_staff.ts
-   3:26   error  A `require()` style import is forbidden   @typescript-eslint/no-require-imports
-  16:106  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
-
-C:\Users\zjkdf\莠育ｴ・す繧ｹ繝・Β\esthetics-booking\check_store.ts
-  3:26  error  A `require()` style import is forbidden  @typescript-eslint/no-require-imports
-
-C:\Users\zjkdf\莠育ｴ・す繧ｹ繝・Β\esthetics-booking\check_stores.ts
-   3:26  error    A `require()` style import is forbidden     @typescript-eslint/no-require-imports
-  10:27  warning  'error' is assigned a value but never used  @typescript-eslint/no-unused-vars
-  16:25  error    Unexpected any. Specify a different type    @typescript-eslint/no-explicit-any
-  19:27  error    Unexpected any. Specify a different type    @typescript-eslint/no-explicit-any
-
-C:\Users\zjkdf\莠育ｴ・す繧ｹ繝・Β\esthetics-booking\fix_actions.js
-  1:12  error  A `require()` style import is forbidden  @typescript-eslint/no-require-imports
-
-C:\Users\zjkdf\莠育ｴ・す繧ｹ繝・Β\esthetics-booking\fix_manual_booking.js
-  1:12  error  A `require()` style import is forbidden  @typescript-eslint/no-require-imports
-
-C:\Users\zjkdf\莠育ｴ・す繧ｹ繝・Β\esthetics-booking\force_bypass.js
-  1:12  error  A `require()` style import is forbidden  @typescript-eslint/no-require-imports
-
 C:\Users\zjkdf\莠育ｴ・す繧ｹ繝・Β\esthetics-booking\next.config.ts
   1:15  warning  'NextConfig' is defined but never used    @typescript-eslint/no-unused-vars
   3:19  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
-
-C:\Users\zjkdf\莠育ｴ・す繧ｹ繝・Β\esthetics-booking\patch_actions.js
-  1:12  error  A `require()` style import is forbidden  @typescript-eslint/no-require-imports
-
-C:\Users\zjkdf\莠育ｴ・す繧ｹ繝・Β\esthetics-booking\patch_booking_act.js
-  1:12  error  A `require()` style import is forbidden  @typescript-eslint/no-require-imports
-
-C:\Users\zjkdf\莠育ｴ・す繧ｹ繝・Β\esthetics-booking\patch_booking_bypass.js
-  1:12  error  A `require()` style import is forbidden  @typescript-eslint/no-require-imports
-
-C:\Users\zjkdf\莠育ｴ・す繧ｹ繝・Β\esthetics-booking\patch_booking_debug.js
-  1:12  error  A `require()` style import is forbidden  @typescript-eslint/no-require-imports
-
-C:\Users\zjkdf\莠育ｴ・す繧ｹ繝・Β\esthetics-booking\patch_booking_service.js
-  1:12  error  A `require()` style import is forbidden  @typescript-eslint/no-require-imports
-
-C:\Users\zjkdf\莠育ｴ・す繧ｹ繝・Β\esthetics-booking\patch_dialog.js
-  1:12  error  A `require()` style import is forbidden  @typescript-eslint/no-require-imports
-
-C:\Users\zjkdf\莠育ｴ・す繧ｹ繝・Β\esthetics-booking\src\app\api\checkout_sessions\route.ts
-  39:61  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
-  82:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
 
 C:\Users\zjkdf\莠育ｴ・す繧ｹ繝・Β\esthetics-booking\src\app\api\stripe\callback\route.ts
   39:18  warning  'e' is defined but never used             @typescript-eslint/no-unused-vars
@@ -74,10 +14,6 @@ C:\Users\zjkdf\莠育ｴ・す繧ｹ繝・Β\esthetics-booking\src\app\api\strip
 C:\Users\zjkdf\莠育ｴ・す繧ｹ繝・Β\esthetics-booking\src\app\api\stripe\connect\route.ts
    2:10  warning  'stripe' is defined but never used        @typescript-eslint/no-unused-vars
   48:21  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
-
-C:\Users\zjkdf\莠育ｴ・す繧ｹ繝・Β\esthetics-booking\src\app\api\webhooks\stripe\route.ts
-  33:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
-  40:46  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
 
 C:\Users\zjkdf\莠育ｴ・す繧ｹ繝・Β\esthetics-booking\src\app\dashboard\bookings\manual-booking-dialog.tsx
   34:13  warning  'fetchBookings' is assigned a value but never used  @typescript-eslint/no-unused-vars
@@ -141,9 +77,6 @@ C:\Users\zjkdf\莠育ｴ・す繧ｹ繝・Β\esthetics-booking\src\app\dashboard
 C:\Users\zjkdf\莠育ｴ・す繧ｹ繝・Β\esthetics-booking\src\app\store\[slug]\menu-list.tsx
   21:33  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
 
-C:\Users\zjkdf\莠育ｴ・す繧ｹ繝・Β\esthetics-booking\src\components\multi-image-upload.tsx
-  55:25  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
-
 C:\Users\zjkdf\莠育ｴ・す繧ｹ繝・Β\esthetics-booking\src\lib\actions\billing.ts
   66:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
 
@@ -176,36 +109,6 @@ C:\Users\zjkdf\莠育ｴ・す繧ｹ繝・Β\esthetics-booking\src\lib\stripe.ts
 C:\Users\zjkdf\莠育ｴ・す繧ｹ繝・Β\esthetics-booking\src\lib\types\store.ts
   25:22  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
 
-C:\Users\zjkdf\莠育ｴ・す繧ｹ繝・Β\esthetics-booking\test-shift-fetch.js
-  1:12  error  A `require()` style import is forbidden  @typescript-eslint/no-require-imports
-
-C:\Users\zjkdf\莠育ｴ・す繧ｹ繝・Β\esthetics-booking\test-shift.js
-  1:26  error  A `require()` style import is forbidden  @typescript-eslint/no-require-imports
-  2:1   error  A `require()` style import is forbidden  @typescript-eslint/no-require-imports
-
-C:\Users\zjkdf\莠育ｴ・す繧ｹ繝・Β\esthetics-booking\test_auth_del.ts
-  3:26  error    A `require()` style import is forbidden        @typescript-eslint/no-require-imports
-  8:11  warning  'supabase' is assigned a value but never used  @typescript-eslint/no-unused-vars
-
-C:\Users\zjkdf\莠育ｴ・す繧ｹ繝・Β\esthetics-booking\test_availability.ts
-   3:26  error  A `require()` style import is forbidden         @typescript-eslint/no-require-imports
-   5:12  error  A `require()` style import is forbidden         @typescript-eslint/no-require-imports
-  13:41  error  Unexpected any. Specify a different type        @typescript-eslint/no-explicit-any
-  29:13  error  'out' is never reassigned. Use 'const' instead  prefer-const
-  36:17  error  Unexpected any. Specify a different type        @typescript-eslint/no-explicit-any
-
-C:\Users\zjkdf\莠育ｴ・す繧ｹ繝・Β\esthetics-booking\test_del.ts
-  3:26  error  A `require()` style import is forbidden  @typescript-eslint/no-require-imports
-
-C:\Users\zjkdf\莠育ｴ・す繧ｹ繝・Β\esthetics-booking\test_rls.ts
-   3:26  error    A `require()` style import is forbidden        @typescript-eslint/no-require-imports
-  19:19  warning  'policies' is assigned a value but never used  @typescript-eslint/no-unused-vars
-
-C:\Users\zjkdf\莠育ｴ・す繧ｹ繝・Β\esthetics-booking\test_weekly.ts
-   3:26  error  A `require()` style import is forbidden   @typescript-eslint/no-require-imports
-   5:12  error  A `require()` style import is forbidden   @typescript-eslint/no-require-imports
-  22:17  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
-
-笨・101 problems (86 errors, 15 warnings)
-  2 errors and 2 warnings potentially fixable with the `--fix` option.
+笨・56 problems (44 errors, 12 warnings)
+  1 error and 2 warnings potentially fixable with the `--fix` option.
 

@@ -53,6 +53,19 @@ CREATE TABLE IF NOT EXISTS staff (
     avatar_url TEXT,
     specialties JSONB DEFAULT '[]'::jsonb, -- array of strings
     service_ids JSONB DEFAULT '[]'::jsonb, -- array of UUIDs
+    images JSONB DEFAULT '[]'::jsonb, -- array of image URLs (up to 15)
+    back_margin_rate NUMERIC DEFAULT 0, -- percentage 0-100
+    user_id UUID, -- references auth.users for cast login
+    nomination_fee INTEGER DEFAULT 0,
+    age INTEGER,
+    height INTEGER,
+    bust INTEGER,
+    cup TEXT,
+    waist INTEGER,
+    hip INTEGER,
+    class_rank TEXT,
+    twitter_url TEXT,
+    is_new_face BOOLEAN DEFAULT false,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
@@ -130,6 +143,10 @@ CREATE TABLE IF NOT EXISTS bookings (
     status TEXT NOT NULL DEFAULT 'pending', -- pending, confirmed, cancelled, completed
     buffer_minutes_before INTEGER DEFAULT 0,
     buffer_minutes_after INTEGER DEFAULT 0,
+    nomination_fee INTEGER DEFAULT 0,
+    cast_back_amount INTEGER DEFAULT 0,
+    course_amount INTEGER DEFAULT 0,
+    options_amount INTEGER DEFAULT 0,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
@@ -187,7 +204,20 @@ CREATE TABLE IF NOT EXISTS customer_tickets (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- 12. RLS Policies (Basic placeholder to enable access)
+-- 12. News (Information)
+CREATE TABLE IF NOT EXISTS news (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    store_id UUID NOT NULL REFERENCES stores(id) ON DELETE CASCADE,
+    title TEXT NOT NULL,
+    content TEXT,
+    image_url TEXT,
+    url TEXT,
+    is_published BOOLEAN DEFAULT true,
+    published_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- 13. RLS Policies (Basic placeholder to enable access)
 -- Note: You should restrict these properly in production according to auth.uid()
 -- For development purposes, we can allow public access or authenticated user access
 -- Example:

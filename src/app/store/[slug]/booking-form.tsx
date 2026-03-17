@@ -203,7 +203,16 @@ export function BookingForm({ storeId, storeName, slug, themeColor, isOpen, onOp
             // Calculate subtotal
             const servicesPrice = selectedServiceObjects.reduce((sum, s) => sum + s.price, 0)
             const optionsPrice = allOptions.reduce((sum, opt) => sum + opt.price, 0)
-            const subtotal = servicesPrice + optionsPrice
+            // Get nomination fee
+            let nominationFee = 0
+            if (selectedStaff && selectedStaff !== 'no-preference') {
+                const staff = staffList.find(s => s.id === selectedStaff)
+                if (staff && staff.nomination_fee) {
+                    nominationFee = staff.nomination_fee
+                }
+            }
+
+            const subtotal = servicesPrice + optionsPrice + nominationFee
 
             const totalPrice = Math.max(0, subtotal - discountAmount) // Apply discount
 
@@ -397,8 +406,17 @@ export function BookingForm({ storeId, storeName, slug, themeColor, isOpen, onOp
             const allServiceOptions = Object.values(selectedOptions).flat()
             const allOptions = [...allServiceOptions, ...selectedGlobalOptions]
 
+            // Get nomination fee
+            let nominationFee = 0
+            if (selectedStaff && selectedStaff !== 'no-preference') {
+                const staff = staffList.find(s => s.id === selectedStaff)
+                if (staff && staff.nomination_fee) {
+                    nominationFee = staff.nomination_fee
+                }
+            }
+
             const servicesPrice = selectedServiceObjects.reduce((sum, s) => sum + s.price, 0)
-            const subtotal = servicesPrice + allOptions.reduce((sum, opt) => sum + opt.price, 0)
+            const subtotal = servicesPrice + allOptions.reduce((sum, opt) => sum + opt.price, 0) + nominationFee
 
             let discount = 0
             if (coupon.discount_type === 'fixed') {
@@ -600,7 +618,12 @@ export function BookingForm({ storeId, storeName, slug, themeColor, isOpen, onOp
                                             </div>
                                             <div>
                                                 <Label htmlFor={staff.id} className="cursor-pointer font-bold text-lg block">{staff.name}</Label>
-                                                <p className="text-xs text-muted-foreground mt-0.5">{staff.role} {staff.years_of_experience ? `(歴${staff.years_of_experience}年)` : ''}</p>
+                                                <div className="flex items-center gap-2 mt-0.5">
+                                                    <p className="text-xs text-muted-foreground">{staff.role} {staff.years_of_experience ? `(歴${staff.years_of_experience}年)` : ''}</p>
+                                                    {staff.nomination_fee && staff.nomination_fee > 0 && (
+                                                        <span className="text-xs font-semibold text-rose-600 bg-rose-50 px-1.5 py-0.5 rounded">指名料 ¥{staff.nomination_fee.toLocaleString()}</span>
+                                                    )}
+                                                </div>
                                             </div>
                                         </div>
                                         {staff.tags && staff.tags.length > 0 && (
@@ -773,13 +796,13 @@ export function BookingForm({ storeId, storeName, slug, themeColor, isOpen, onOp
                                     {selectedGlobalOptions.length > 0 && (
                                         <li><strong>全体オプション:</strong> {selectedGlobalOptions.map((o: any) => o.name).join(', ')}</li>
                                     )}
-                                    <li><strong>小計:</strong> ¥{services.filter(s => selectedServices.includes(s.id)).reduce((sum, s) => sum + s.price, 0) + Object.values(selectedOptions).flat().reduce((sum: any, o: any) => sum + o.price, 0) + selectedGlobalOptions.reduce((sum: any, o: any) => sum + o.price, 0)}</li>
+                                    <li><strong>指名スタッフ:</strong> {selectedStaff === 'no-preference' ? '指定なし' : staffList.find(s => s.id === selectedStaff)?.name} {selectedStaff !== 'no-preference' && staffList.find(s => s.id === selectedStaff)?.nomination_fee ? `(指名料 ¥${staffList.find(s => s.id === selectedStaff)?.nomination_fee?.toLocaleString()})` : ''}</li>
+                                    <li><strong>小計:</strong> ¥{(services.filter(s => selectedServices.includes(s.id)).reduce((sum, s) => sum + s.price, 0) + Object.values(selectedOptions).flat().reduce((sum: any, o: any) => sum + o.price, 0) + selectedGlobalOptions.reduce((sum: any, o: any) => sum + o.price, 0) + (selectedStaff !== 'no-preference' ? (staffList.find(s => s.id === selectedStaff)?.nomination_fee || 0) : 0)).toLocaleString()}</li>
                                     {appliedCoupon && (
                                         <li className="text-red-600"><strong>クーポン割引:</strong> -¥{discountAmount} ({appliedCoupon.code})</li>
                                     )}
-                                    <li className="text-lg mt-2 border-t pt-2"><strong>合計支払額:</strong> ¥{services.filter(s => selectedServices.includes(s.id)).reduce((sum, s) => sum + s.price, 0) + Object.values(selectedOptions).flat().reduce((sum: any, o: any) => sum + o.price, 0) + selectedGlobalOptions.reduce((sum: any, o: any) => sum + o.price, 0) - discountAmount}</li>
+                                    <li className="text-lg mt-2 border-t pt-2"><strong>合計支払額:</strong> ¥{(services.filter(s => selectedServices.includes(s.id)).reduce((sum, s) => sum + s.price, 0) + Object.values(selectedOptions).flat().reduce((sum: any, o: any) => sum + o.price, 0) + selectedGlobalOptions.reduce((sum: any, o: any) => sum + o.price, 0) + (selectedStaff !== 'no-preference' ? (staffList.find(s => s.id === selectedStaff)?.nomination_fee || 0) : 0) - discountAmount).toLocaleString()}</li>
                                     <li><strong>合計時間:</strong> {services.filter(s => selectedServices.includes(s.id)).reduce((sum, s) => sum + s.duration_minutes, 0) + Object.values(selectedOptions).flat().reduce((sum: any, o: any) => sum + o.duration_minutes, 0) + selectedGlobalOptions.reduce((sum: any, o: any) => sum + o.duration_minutes, 0)}分</li>
-                                    <li><strong>スタッフ:</strong> {selectedStaff === 'no-preference' ? '指定なし' : staffList.find(s => s.id === selectedStaff)?.name}</li>
                                     <li><strong>日時:</strong> {date?.toLocaleDateString()} {time}</li>
                                 </ul>
                             </div>

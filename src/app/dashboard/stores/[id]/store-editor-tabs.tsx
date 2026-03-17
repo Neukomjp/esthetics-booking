@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { StorePageBuilder } from './builder'
 import { BasicInfoEditor } from './basic-info-editor'
 import { StaffManager } from './staff-manager'
+import { NewsManager } from './news-manager'
 import { MenuManager } from './menu-manager'
 import { ShiftManager } from './shift-manager'
 import { EmailSettings } from './email-settings'
@@ -40,6 +41,7 @@ export function StoreEditorTabs({ store, allStores = [], initialTab = 'basic' }:
                     <TabsTrigger value="design">ページデザイン</TabsTrigger>
                     <TabsTrigger value="menu">メニュー管理</TabsTrigger>
                     <TabsTrigger value="staff">スタッフ管理</TabsTrigger>
+                    <TabsTrigger value="news">お知らせ管理</TabsTrigger>
                     <TabsTrigger value="shift">シフト管理</TabsTrigger>
                     <TabsTrigger value="ticket">回数券管理</TabsTrigger>
                     <TabsTrigger value="notifications">メール設定</TabsTrigger>
@@ -87,6 +89,20 @@ export function StoreEditorTabs({ store, allStores = [], initialTab = 'basic' }:
                         </CardHeader>
                         <CardContent>
                             <StaffManager storeId={store.id} />
+                        </CardContent>
+                    </Card>
+                </TabsContent>
+
+                <TabsContent value="news" className="space-y-4">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>お知らせ管理</CardTitle>
+                            <CardDescription>
+                                店舗からのお知らせ（News / Information）を作成・編集します。
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <NewsManager storeId={store.id} />
                         </CardContent>
                     </Card>
                 </TabsContent>

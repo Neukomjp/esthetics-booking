@@ -1,0 +1,27 @@
+笆ｲ Next.js 16.1.6 (Turbopack)
+
+  Creating an optimized production build ...
+笨・Compiled successfully in 4.5s
+  Running TypeScript ...
+  Collecting page data using 15 workers ...
+笞・・STRIPE_SECRET_KEY is missing. Stripe features will fail at runtime. Please set it in your .env.local file.
+笞・・STRIPE_SECRET_KEY is missing. Stripe features will fail at runtime. Please set it in your .env.local file.
+笞・・STRIPE_SECRET_KEY is missing. Stripe features will fail at runtime. Please set it in your .env.local file.
+  Generating static pages using 15 workers (0/32) ...
+笞・・STRIPE_SECRET_KEY is missing. Stripe features will fail at runtime. Please set it in your .env.local file.
+Error occurred prerendering page "/admin". Read more: https://nextjs.org/docs/messages/prerender-error
+Error: @supabase/ssr: Your project's URL and API key are required to create a Supabase client!
+
+Check your Supabase project's API settings to find these values
+
+https://supabase.com/dashboard/project/_/settings/api
+    at <unknown> (https://supabase.com/dashboard/project/_/settings/api)
+    at c (C:\Users\zjkdf\莠育ｴ・す繧ｹ繝・Β\esthetics-booking\.next\server\chunks\ssr\[root-of-the-server]__1bee1e86._.js:1:185)
+    at Object.getAllOrganizations (C:\Users\zjkdf\莠育ｴ・す繧ｹ繝・Β\esthetics-booking\.next\server\chunks\ssr\[root-of-the-server]__f472e538._.js:1:2824)
+    at Object.getSystemStats (C:\Users\zjkdf\莠育ｴ・す繧ｹ繝・Β\esthetics-booking\.next\server\chunks\ssr\[root-of-the-server]__f472e538._.js:1:3016)
+    at h (C:\Users\zjkdf\莠育ｴ・す繧ｹ繝・Β\esthetics-booking\.next\server\chunks\ssr\[root-of-the-server]__f472e538._.js:1:4235)
+    at stringify (<anonymous>) {
+  digest: '3661025669'
+}
+Export encountered an error on /admin/page: /admin, exiting the build.
+筧ｯ Next.js build worker exited with code: 1 and signal: null

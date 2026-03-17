@@ -30,14 +30,14 @@ export async function POST(req: Request) {
         } else {
             event = stripe.webhooks.constructEvent(rawBody, signature, webhookSecret)
         }
-    } catch (err: any) {
-        console.error(`⚠️ Webhook signature verification failed:`, err.message)
+    } catch (err: unknown) {
+        console.error(`⚠️ Webhook signature verification failed:`, err instanceof Error ? err.message : err)
         return NextResponse.json({ message: 'Webhook error' }, { status: 400 })
     }
 
     // Handle the event
     if (event.type === 'checkout.session.completed') {
-        const session = event.data.object as any
+        const session = event.data.object as { metadata?: { bookingId?: string } }
 
         // Retrieve the bookingId we stored in metadata
         const bookingId = session.metadata?.bookingId

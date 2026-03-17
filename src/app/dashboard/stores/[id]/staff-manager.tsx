@@ -18,6 +18,7 @@ import { storeService } from '@/lib/services/stores'
 import { getStoresAction } from '@/lib/actions/store'
 import { toast } from 'sonner'
 import { ShiftDialog } from './shift-dialog'
+import { MultiImageUpload } from '@/components/multi-image-upload'
 
 interface StaffManagerProps {
     storeId: string
@@ -38,9 +39,22 @@ export function StaffManager({ storeId }: StaffManagerProps) {
         serviceIds: [] as string[],
         storeIds: [storeId] as string[],
         instagram_url: '',
+        twitter_url: '',
         greeting_message: '',
         years_of_experience: '',
-        tags: ''
+        tags: '',
+        images: [] as string[],
+        back_margin_rate: '',
+        user_id: '',
+        nomination_fee: '',
+        age: '',
+        height: '',
+        bust: '',
+        cup: '',
+        waist: '',
+        hip: '',
+        class_rank: '',
+        is_new_face: false
     })
     const [isLoading, setIsLoading] = useState(false)
 
@@ -53,7 +67,7 @@ export function StaffManager({ storeId }: StaffManagerProps) {
     useEffect(() => {
         if (!isDialogOpen) {
             setEditingStaff(null)
-            setFormData({ name: '', role: '', bio: '', specialties: '', serviceIds: [], storeIds: [storeId], instagram_url: '', greeting_message: '', years_of_experience: '', tags: '' })
+            setFormData({ name: '', role: '', bio: '', specialties: '', serviceIds: [], storeIds: [storeId], instagram_url: '', twitter_url: '', greeting_message: '', years_of_experience: '', tags: '', images: [], back_margin_rate: '', user_id: '', nomination_fee: '', age: '', height: '', bust: '', cup: '', waist: '', hip: '', class_rank: '', is_new_face: false })
         }
     }, [isDialogOpen, storeId])
 
@@ -101,7 +115,20 @@ export function StaffManager({ storeId }: StaffManagerProps) {
             instagram_url: staff.instagram_url || '',
             greeting_message: staff.greeting_message || '',
             years_of_experience: staff.years_of_experience?.toString() || '',
-            tags: staff.tags?.join(', ') || ''
+            tags: staff.tags?.join(', ') || '',
+            images: staff.images || [],
+            back_margin_rate: staff.back_margin_rate?.toString() || '',
+            user_id: staff.user_id || '',
+            nomination_fee: staff.nomination_fee?.toString() || '',
+            age: staff.age?.toString() || '',
+            height: staff.height?.toString() || '',
+            bust: staff.bust?.toString() || '',
+            cup: staff.cup || '',
+            waist: staff.waist?.toString() || '',
+            hip: staff.hip?.toString() || '',
+            class_rank: staff.class_rank || '',
+            twitter_url: staff.twitter_url || '',
+            is_new_face: staff.is_new_face || false
         })
         setIsDialogOpen(true)
     }
@@ -114,6 +141,13 @@ export function StaffManager({ storeId }: StaffManagerProps) {
             const specialtiesArray = formData.specialties.split(',').map(s => s.trim()).filter(Boolean)
             const tagsArray = formData.tags.split(',').map(s => s.trim()).filter(Boolean)
             const yearsNum = formData.years_of_experience ? parseInt(formData.years_of_experience, 10) : undefined
+            const backMarginNum = formData.back_margin_rate ? parseFloat(formData.back_margin_rate) : 0
+            const nominationFeeNum = formData.nomination_fee ? parseInt(formData.nomination_fee, 10) : 0
+            const ageNum = formData.age ? parseInt(formData.age, 10) : undefined
+            const heightNum = formData.height ? parseInt(formData.height, 10) : undefined
+            const bustNum = formData.bust ? parseInt(formData.bust, 10) : undefined
+            const waistNum = formData.waist ? parseInt(formData.waist, 10) : undefined
+            const hipNum = formData.hip ? parseInt(formData.hip, 10) : undefined
 
             if (editingStaff) {
                 // Update
@@ -127,7 +161,19 @@ export function StaffManager({ storeId }: StaffManagerProps) {
                     instagram_url: formData.instagram_url,
                     greeting_message: formData.greeting_message,
                     years_of_experience: yearsNum,
-                    tags: tagsArray
+                    images: formData.images,
+                    back_margin_rate: backMarginNum,
+                    user_id: formData.user_id || undefined,
+                    nomination_fee: nominationFeeNum,
+                    age: ageNum,
+                    height: heightNum,
+                    bust: bustNum,
+                    cup: formData.cup || undefined,
+                    waist: waistNum,
+                    hip: hipNum,
+                    class_rank: formData.class_rank || undefined,
+                    twitter_url: formData.twitter_url || undefined,
+                    is_new_face: formData.is_new_face
                 })
                 setStaffList(staffList.map(s => s.id === updated.id ? updated : s))
                 toast.success('スタッフ情報を更新しました')
@@ -145,7 +191,20 @@ export function StaffManager({ storeId }: StaffManagerProps) {
                     instagram_url: formData.instagram_url,
                     greeting_message: formData.greeting_message,
                     years_of_experience: yearsNum,
-                    tags: tagsArray
+                    tags: tagsArray,
+                    images: formData.images,
+                    back_margin_rate: backMarginNum,
+                    user_id: formData.user_id || undefined,
+                    nomination_fee: nominationFeeNum,
+                    age: ageNum,
+                    height: heightNum,
+                    bust: bustNum,
+                    cup: formData.cup || undefined,
+                    waist: waistNum,
+                    hip: hipNum,
+                    class_rank: formData.class_rank || undefined,
+                    twitter_url: formData.twitter_url || undefined,
+                    is_new_face: formData.is_new_face
                 })
                 setStaffList([added, ...staffList])
                 toast.success('スタッフを追加しました')
@@ -188,7 +247,19 @@ export function StaffManager({ storeId }: StaffManagerProps) {
                                 スタッフの基本情報を入力してください。
                             </DialogDescription>
                         </DialogHeader>
-                        <div className="grid gap-4 py-4 px-1 max-h-[60vh] overflow-y-auto">
+                        <div className="grid gap-4 py-4 px-1 max-h-[60vh] overflow-y-auto w-full overflow-x-hidden">
+                            <div className="flex flex-col gap-2 mb-4">
+                                <Label className="font-semibold text-lg">キャスト画像 (最大15枚)</Label>
+                                <MultiImageUpload 
+                                    value={formData.images} 
+                                    onChange={(urls) => setFormData({ ...formData, images: urls })} 
+                                    maxImages={15}
+                                />
+                                <p className="text-xs text-muted-foreground mt-1">※ 1枚目が一覧やトップに表示されるメイン画像になります。</p>
+                            </div>
+
+                            <hr className="mb-4" />
+
                             <div className="grid grid-cols-4 items-center gap-4">
                                 <Label htmlFor="name" className="text-right">名前 <span className="text-red-500">*</span></Label>
                                 <Input
@@ -261,6 +332,55 @@ export function StaffManager({ storeId }: StaffManagerProps) {
                                     placeholder="https://instagram.com/..."
                                 />
                             </div>
+                            <div className="grid grid-cols-4 items-center gap-4">
+                                <Label htmlFor="twitter" className="text-right">X (Twitter) URL</Label>
+                                <Input
+                                    id="twitter"
+                                    type="url"
+                                    value={formData.twitter_url}
+                                    onChange={(e) => setFormData({ ...formData, twitter_url: e.target.value })}
+                                    className="col-span-3"
+                                    placeholder="https://x.com/..."
+                                />
+                            </div>
+                            <hr className="my-2" />
+                            <div className="grid grid-cols-4 items-center gap-4">
+                                <Label htmlFor="class_rank" className="text-right">クラス / ランク</Label>
+                                <Input
+                                    id="class_rank"
+                                    value={formData.class_rank}
+                                    onChange={(e) => setFormData({ ...formData, class_rank: e.target.value })}
+                                    className="col-span-3"
+                                    placeholder="例: PLATINUM, GOLD, レギュラー"
+                                />
+                            </div>
+                            <div className="grid grid-cols-4 items-center gap-4">
+                                <Label className="text-right">新人フラグ</Label>
+                                <div className="col-span-3 flex items-center space-x-2">
+                                    <input
+                                        type="checkbox"
+                                        id="new_face"
+                                        checked={formData.is_new_face}
+                                        onChange={(e) => setFormData({ ...formData, is_new_face: e.target.checked })}
+                                        className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                                    />
+                                    <label htmlFor="new_face" className="text-sm cursor-pointer">
+                                        New Face として表示する
+                                    </label>
+                                </div>
+                            </div>
+                            <div className="grid grid-cols-4 items-center gap-4 mt-2">
+                                <Label className="text-right mt-1">スペック</Label>
+                                <div className="col-span-3 grid grid-cols-3 gap-2">
+                                    <Input placeholder="年齢" type="number" value={formData.age} onChange={e => setFormData({...formData, age: e.target.value})} />
+                                    <Input placeholder="身長 (cm)" type="number" value={formData.height} onChange={e => setFormData({...formData, height: e.target.value})} />
+                                    <Input placeholder="カップ (例: F)" value={formData.cup} onChange={e => setFormData({...formData, cup: e.target.value})} />
+                                    <Input placeholder="Bust (cm)" type="number" value={formData.bust} onChange={e => setFormData({...formData, bust: e.target.value})} />
+                                    <Input placeholder="Waist (cm)" type="number" value={formData.waist} onChange={e => setFormData({...formData, waist: e.target.value})} />
+                                    <Input placeholder="Hip (cm)" type="number" value={formData.hip} onChange={e => setFormData({...formData, hip: e.target.value})} />
+                                </div>
+                            </div>
+                            <hr className="my-2" />
                             <div className="grid grid-cols-4 items-start gap-4">
                                 <Label htmlFor="greeting" className="text-right mt-2">ご挨拶文</Label>
                                 <textarea
@@ -269,6 +389,41 @@ export function StaffManager({ storeId }: StaffManagerProps) {
                                     value={formData.greeting_message}
                                     onChange={(e) => setFormData({ ...formData, greeting_message: e.target.value })}
                                     placeholder="お客様へのメッセージ・挨拶文を入力してください"
+                                />
+                            </div>
+                            <div className="grid grid-cols-4 items-center gap-4">
+                                <Label htmlFor="backMargin" className="text-right">バック率 (%)</Label>
+                                <Input
+                                    id="backMargin"
+                                    type="number"
+                                    min="0"
+                                    max="100"
+                                    value={formData.back_margin_rate}
+                                    onChange={(e) => setFormData({ ...formData, back_margin_rate: e.target.value })}
+                                    className="col-span-3"
+                                    placeholder="例: 50"
+                                />
+                            </div>
+                            <div className="grid grid-cols-4 items-center gap-4">
+                                <Label htmlFor="nominationFee" className="text-right">指名料 (円)</Label>
+                                <Input
+                                    id="nominationFee"
+                                    type="number"
+                                    min="0"
+                                    value={formData.nomination_fee}
+                                    onChange={(e) => setFormData({ ...formData, nomination_fee: e.target.value })}
+                                    className="col-span-3"
+                                    placeholder="例: 1000"
+                                />
+                            </div>
+                            <div className="grid grid-cols-4 items-center gap-4">
+                                <Label htmlFor="userId" className="text-right text-xs">連携ユーザーID<br/>(ログイン用)</Label>
+                                <Input
+                                    id="userId"
+                                    value={formData.user_id}
+                                    onChange={(e) => setFormData({ ...formData, user_id: e.target.value })}
+                                    className="col-span-3"
+                                    placeholder="連携させるキャストのアカウントID"
                                 />
                             </div>
                             <div className="grid grid-cols-4 items-start gap-4">

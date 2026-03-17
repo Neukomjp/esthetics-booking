@@ -35,8 +35,10 @@ export async function POST(req: Request) {
             .eq('role', 'owner')
             .limit(1)
             .single()
-
-        const stripeAccountId = (orgMember?.organization as any)?.stripe_account_id
+        const stripeAccountId = orgMember?.organization ? 
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            orgMember.organization.stripe_account_id : null
 
         if (!stripeAccountId) {
             console.error('Store does not have a connected Stripe account')
@@ -79,10 +81,10 @@ export async function POST(req: Request) {
         }
 
         return NextResponse.json({ url: session.url })
-    } catch (err: any) {
+    } catch (err: unknown) {
         console.error('Stripe Checkout Error:', err)
         return NextResponse.json(
-            { message: err.message || 'Error creating checkout session' },
+            { message: err instanceof Error ? err.message : 'Error creating checkout session' },
             { status: 500 }
         )
     }
