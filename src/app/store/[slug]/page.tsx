@@ -89,6 +89,7 @@ export default async function StorePublicPage(props: { params: Promise<{ slug: s
     const heroImage = store.cover_image_url || 'https://images.unsplash.com/photo-1600334089648-b0d9d3028eb2?q=80&w=2070&auto=format&fit=crop'
     const logoUrl = store.logo_url
     const welcomeMessage = theme.welcomeMessage || ''
+    const heroTagline = theme.heroTagline || '極上の癒やしと非日常の空間へ'
 
     const newFaces = staffList.filter(s => s.is_new_face)
     const activeNews = newsList.filter(n => n.is_published).slice(0, 5)
@@ -132,7 +133,7 @@ export default async function StorePublicPage(props: { params: Promise<{ slug: s
                          {logoUrl && <img src={logoUrl} alt="Store Logo" className="w-24 h-24 md:w-40 md:h-40 rounded-full border-2 border-amber-500/50 shadow-2xl mx-auto object-cover" />}
                     </div>
                     <h2 className="text-2xl md:text-5xl font-serif tracking-widest text-white drop-shadow-lg mb-4 md:mb-6 leading-tight">
-                        極上の癒やしと<br className="md:hidden"/>非日常の空間へ
+                        {heroTagline}
                     </h2>
                     {welcomeMessage && (
                         <p className="text-zinc-300 text-sm md:text-lg mb-6 md:mb-10 whitespace-pre-wrap leading-relaxed max-w-2xl mx-auto font-light">
