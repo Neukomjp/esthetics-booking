@@ -11,7 +11,7 @@ import { NewsManager } from './news-manager'
 import { MenuManager } from './menu-manager'
 import { ShiftManager } from './shift-manager'
 import { EmailSettings } from './email-settings'
-import { TicketManager } from './ticket-manager'
+
 import { StoreData } from '@/lib/types/store'
 import { ExternalLink } from 'lucide-react'
 
@@ -43,7 +43,7 @@ export function StoreEditorTabs({ store, allStores = [], initialTab = 'basic' }:
                     <TabsTrigger value="staff">スタッフ管理</TabsTrigger>
                     <TabsTrigger value="news">お知らせ管理</TabsTrigger>
                     <TabsTrigger value="shift">シフト管理</TabsTrigger>
-                    <TabsTrigger value="ticket">回数券管理</TabsTrigger>
+
                     <TabsTrigger value="notifications">メール設定</TabsTrigger>
                 </TabsList>
 
@@ -111,19 +111,7 @@ export function StoreEditorTabs({ store, allStores = [], initialTab = 'basic' }:
                     <ShiftManager storeId={store.id} />
                 </TabsContent>
 
-                <TabsContent value="ticket" className="space-y-4">
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>回数券管理</CardTitle>
-                            <CardDescription>
-                                販売する回数券の作成・編集を行います。
-                            </CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <TicketManager storeId={store.id} />
-                        </CardContent>
-                    </Card>
-                </TabsContent>
+
 
                 <TabsContent value="notifications" className="space-y-4">
                     <EmailSettings store={store} />

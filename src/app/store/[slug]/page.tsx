@@ -7,7 +7,7 @@ import { MapPin, Phone, Clock, Navigation } from 'lucide-react'
 import { storeService } from '@/lib/services/stores'
 import { organizationService } from '@/lib/services/organizations'
 import { menuService } from '@/lib/services/menu'
-import { ticketService } from '@/lib/services/tickets'
+
 import { staffService } from '@/lib/services/staff'
 import { newsService, News } from '@/lib/services/news'
 import { Service, Staff } from '@/types/staff'
@@ -61,7 +61,7 @@ export default async function StorePublicPage(props: { params: Promise<{ slug: s
     let store
     let organization
     let menuItems: Service[] = []
-    let tickets: any[] = []
+
     let staffList: Staff[] = []
     let newsList: News[] = []
 
@@ -70,7 +70,7 @@ export default async function StorePublicPage(props: { params: Promise<{ slug: s
         store = await storeService.getStoreBySlug(params.slug, supabase)
         if (store) {
             menuItems = await menuService.getServicesByStoreId(store.id, supabase)
-            tickets = await ticketService.getTicketMasters(store.id, supabase)
+
             staffList = await staffService.getStaffByStoreId(store.id, supabase)
             newsList = await newsService.getNewsByStoreId(store.id)
             if (store.organization_id) {
