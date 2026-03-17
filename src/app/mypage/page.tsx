@@ -10,7 +10,6 @@ import { Badge } from '@/components/ui/badge'
 import { Calendar as CalendarIcon, Clock, LogOut, User } from 'lucide-react'
 
 import { getCurrentCustomerAction, logoutCustomerAction } from '@/lib/actions/auth'
-import { getCustomerTicketsByAuthUserIdAction } from '@/lib/actions/tickets'
 import { getBookingsByAuthUserIdAction } from '@/lib/actions/booking'
 
 export default function MyPage() {
@@ -18,8 +17,6 @@ export default function MyPage() {
     const [loading, setLoading] = useState(true)
      
     const [bookings, setBookings] = useState<any[]>([])
-     
-    const [tickets, setTickets] = useState<any[]>([])
 
     useEffect(() => {
         checkUser()
@@ -34,18 +31,11 @@ export default function MyPage() {
             return
         }
 
-        // Parallel fetch using auth_user_id
-        const [bookingsData, ticketsData] = await Promise.all([
-            getBookingsByAuthUserIdAction(authUser.id),
-            getCustomerTicketsByAuthUserIdAction(authUser.id)
-        ])
+        const bookingsData = await getBookingsByAuthUserIdAction(authUser.id)
 
         setBookings(bookingsData || [])
-        setTickets(ticketsData || [])
         setLoading(false)
     }
-
-
 
     async function handleLogout() {
         await logoutCustomerAction()
@@ -75,33 +65,6 @@ export default function MyPage() {
                             <LogOut className="mr-2 h-4 w-4" /> ログアウト
                         </Button>
                     </div>
-                </div>
-
-                <div className="space-y-4">
-                    <h2 className="text-xl font-bold">保有回数券</h2>
-                    {tickets.length === 0 ? (
-                        <div className="bg-white p-6 rounded-lg shadow-sm border text-center text-gray-500">
-                            <p>保有している回数券はありません</p>
-                        </div>
-                    ) : (
-                        <div className="grid md:grid-cols-2 gap-4">
-                            {tickets.map(ticket => (
-                                <Card key={ticket.id} className={ticket.remaining_uses > 0 ? 'bg-white' : 'bg-gray-50 opacity-75'}>
-                                    <CardHeader className="pb-2">
-                                        <div className="flex justify-between items-start">
-                                            <CardTitle className="text-base">{ticket.name}</CardTitle>
-                                            <Badge variant={ticket.remaining_uses > 0 ? 'default' : 'secondary'}>
-                                                残り {ticket.remaining_uses} 回
-                                            </Badge>
-                                        </div>
-                                        <CardDescription>
-                                            有効期限: {new Date(ticket.expires_at).toLocaleDateString()}
-                                        </CardDescription>
-                                    </CardHeader>
-                                </Card>
-                            ))}
-                        </div>
-                    )}
                 </div>
 
                 <div className="space-y-4">
