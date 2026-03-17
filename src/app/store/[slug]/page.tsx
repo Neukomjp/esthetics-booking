@@ -205,7 +205,7 @@ export default async function StorePublicPage(props: { params: Promise<{ slug: s
                     <SectionTitle en="Today's Schedule" jp="本日の出勤セラピスト" />
                     {staffList.length > 0 ? (
                         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-                            {staffList.filter(s => !s.is_new_face).map(cast => (
+                            {staffList.map(cast => (
                                 <CastCard key={cast.id} cast={cast} slug={params.slug} />
                             ))}
                         </div>
