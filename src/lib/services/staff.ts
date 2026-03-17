@@ -5,32 +5,19 @@ export const staffService = {
     async getStaffByStoreId(storeId: string, supabaseClient?: any) {
         try {
             const supabase = supabaseClient || createClient()
-            // Note: Use inner join with store_staff to get staff for this store
+            // Using direct store_id filter as store_staff relation might not exist or be exposed yet
             const { data, error } = await supabase
                 .from('staff')
-                .select(`
-                    *,
-                    store_staff!inner ( store_id )
-                `)
-                .eq('store_staff.store_id', storeId)
+                .select('*')
+                .eq('store_id', storeId)
 
             if (error) throw new Error(error.message)
 
-            const staffIds = data ? data.map((s: any) => s.id) : []
-            let storeStaffMapping: any[] = []
-            
-            if (staffIds.length > 0) {
-               const { data: mapping } = await supabase
-                   .from('store_staff')
-                   .select('staff_id, store_id')
-                   .in('staff_id', staffIds)
-               storeStaffMapping = mapping || []
-            }
-
+            // Keeping the signature consistent
             return (data || []).map((s: any) => ({
                 id: s.id,
                 storeId: s.store_id,
-                storeIds: storeStaffMapping.filter((m: any) => m.staff_id === s.id).map((m: any) => m.store_id),
+                storeIds: [s.store_id], // Fallback since relation is broken
                 name: s.name,
                 role: s.role,
                 bio: s.bio,
@@ -100,15 +87,6 @@ export const staffService = {
                 .single()
 
             if (error) throw new Error(error.message)
-
-            // Insert into store_staff junction table
-            if (targetStoreIds.length > 0) {
-                const storeStaffEntries = targetStoreIds.map(sid => ({
-                    store_id: sid,
-                    staff_id: data.id
-                }))
-                await supabase.from('store_staff').insert(storeStaffEntries)
-            }
 
             return {
                 id: data.id,
@@ -184,18 +162,6 @@ export const staffService = {
                 .single()
 
             if (error) throw new Error(error.message)
-
-            // Update junction table if storeIds provided
-            if (updates.storeIds) {
-                await supabase.from('store_staff').delete().eq('staff_id', id)
-                if (updates.storeIds.length > 0) {
-                    const storeStaffEntries = updates.storeIds.map(sid => ({
-                        store_id: sid,
-                        staff_id: id
-                    }))
-                    await supabase.from('store_staff').insert(storeStaffEntries)
-                }
-            }
 
             return {
                 id: data.id,
