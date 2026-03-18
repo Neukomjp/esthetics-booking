@@ -38,7 +38,7 @@ interface ReserveClientProps {
 }
 
 const STEPS = [
-    { num: 1, label: 'スタッフ選択', icon: User },
+    { num: 1, label: 'キャスト選択', icon: User },
     { num: 2, label: 'メニュー選択', icon: ClipboardList },
     { num: 3, label: '日時選択', icon: Calendar },
     { num: 4, label: 'お客様情報', icon: CreditCard },
@@ -352,8 +352,8 @@ export function ReserveClient({ store }: ReserveClientProps) {
                     {step === 1 && (
                         <div className="space-y-6">
                             <div>
-                                <h2 className="text-xl font-bold mb-1">スタッフを選択</h2>
-                                <p className="text-sm opacity-60">担当スタッフをお選びください。指名なしも可能です。</p>
+                                <h2 className="text-xl font-bold mb-1">キャストを選択</h2>
+                                <p className="text-sm opacity-60">担当キャストをお選びください。指名なしも可能です。</p>
                             </div>
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 {/* No preference */}
@@ -367,7 +367,7 @@ export function ReserveClient({ store }: ReserveClientProps) {
                                         <div className="w-14 h-14 rounded-full bg-white/5 flex items-center justify-center text-2xl">👤</div>
                                         <div>
                                             <div className="font-bold text-lg">指名なし</div>
-                                            <div className="text-xs opacity-50">どのスタッフでもOK</div>
+                                            <div className="text-xs opacity-50">どのキャストでもOK</div>
                                         </div>
                                     </div>
                                     {selectedStaff === 'no-preference' && (
@@ -638,7 +638,7 @@ export function ReserveClient({ store }: ReserveClientProps) {
                             </div>
                             <div className="space-y-4 text-sm">
                                 <div className="flex justify-between py-3 border-b border-white/10">
-                                    <span className="opacity-60">スタッフ</span>
+                                    <span className="opacity-60">キャスト</span>
                                     <span className="font-bold">{selectedStaff === 'no-preference' ? '指名なし' : staffList.find(s => s.id === selectedStaff)?.name}
                                         {nominationFee > 0 && <span className="text-xs opacity-60 ml-1">(指名料 ¥{nominationFee.toLocaleString()})</span>}
                                     </span>

@@ -459,7 +459,7 @@ export function BookingForm({ storeId, storeName, slug, themeColor, isOpen, onOp
                 <div className="py-4 max-h-[65vh] overflow-y-auto px-2">
                     {/* Progress Indicator */}
                     <div className="flex justify-between mb-6 text-sm text-gray-500">
-                        <span className={step >= 1 ? 'font-bold' : ''} style={{ color: step >= 1 ? (themeColor || '#78350f') : undefined }}>1. スタッフ</span>
+                        <span className={step >= 1 ? 'font-bold' : ''} style={{ color: step >= 1 ? (themeColor || '#78350f') : undefined }}>1. キャスト</span>
                         <span className={step >= 2 ? 'font-bold' : ''} style={{ color: step >= 2 ? (themeColor || '#78350f') : undefined }}>2. メニュー</span>
                         <span className={step >= 3 ? 'font-bold' : ''} style={{ color: step >= 3 ? (themeColor || '#78350f') : undefined }}>3. 日時</span>
                         <span className={step >= 4 ? 'font-bold' : ''} style={{ color: step >= 4 ? (themeColor || '#78350f') : undefined }}>4. 確認</span>
@@ -595,7 +595,7 @@ export function BookingForm({ storeId, storeName, slug, themeColor, isOpen, onOp
 
                     {step === 1 && (
                         <div className="space-y-4 pb-2">
-                            <Label>スタッフを選択してください（指名なし可）</Label>
+                            <Label>キャストを選択してください（指名なし可）</Label>
                             <RadioGroup value={selectedStaff} onValueChange={setSelectedStaff} className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2">
                                 <div className="border p-4 rounded-xl hover:border-primary hover:bg-stone-50 cursor-pointer flex flex-col justify-center items-center text-center transition-colors relative" onClick={() => setSelectedStaff('no-preference')}>
                                     <RadioGroupItem value="no-preference" id="no-preference" className="absolute top-4 right-4" />
@@ -603,7 +603,7 @@ export function BookingForm({ storeId, storeName, slug, themeColor, isOpen, onOp
                                         <span className="text-xl">👤</span>
                                     </div>
                                     <Label htmlFor="no-preference" className="cursor-pointer font-bold text-base">指名なし</Label>
-                                    <p className="text-xs text-muted-foreground mt-1">どのスタッフでも良い場合</p>
+                                    <p className="text-xs text-muted-foreground mt-1">どのキャストでも良い場合</p>
                                 </div>
                                 {staffList.map((staff) => (
                                     <div key={staff.id} className="border p-4 rounded-xl hover:border-primary hover:bg-stone-50 cursor-pointer flex flex-col transition-colors relative" onClick={() => setSelectedStaff(staff.id)}>
@@ -796,7 +796,7 @@ export function BookingForm({ storeId, storeName, slug, themeColor, isOpen, onOp
                                     {selectedGlobalOptions.length > 0 && (
                                         <li><strong>全体オプション:</strong> {selectedGlobalOptions.map((o: any) => o.name).join(', ')}</li>
                                     )}
-                                    <li><strong>指名スタッフ:</strong> {selectedStaff === 'no-preference' ? '指定なし' : staffList.find(s => s.id === selectedStaff)?.name} {selectedStaff !== 'no-preference' && staffList.find(s => s.id === selectedStaff)?.nomination_fee ? `(指名料 ¥${staffList.find(s => s.id === selectedStaff)?.nomination_fee?.toLocaleString()})` : ''}</li>
+                                    <li><strong>指名キャスト:</strong> {selectedStaff === 'no-preference' ? '指定なし' : staffList.find(s => s.id === selectedStaff)?.name} {selectedStaff !== 'no-preference' && staffList.find(s => s.id === selectedStaff)?.nomination_fee ? `(指名料 ¥${staffList.find(s => s.id === selectedStaff)?.nomination_fee?.toLocaleString()})` : ''}</li>
                                     <li><strong>小計:</strong> ¥{(services.filter(s => selectedServices.includes(s.id)).reduce((sum, s) => sum + s.price, 0) + Object.values(selectedOptions).flat().reduce((sum: any, o: any) => sum + o.price, 0) + selectedGlobalOptions.reduce((sum: any, o: any) => sum + o.price, 0) + (selectedStaff !== 'no-preference' ? (staffList.find(s => s.id === selectedStaff)?.nomination_fee || 0) : 0)).toLocaleString()}</li>
                                     {appliedCoupon && (
                                         <li className="text-red-600"><strong>クーポン割引:</strong> -¥{discountAmount} ({appliedCoupon.code})</li>
