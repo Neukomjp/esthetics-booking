@@ -387,8 +387,8 @@ export function ReserveClient({ store }: ReserveClientProps) {
                                     >
                                         <div className="flex items-center gap-3 mb-2">
                                             <div className="w-14 h-14 rounded-full overflow-hidden bg-white/5 shrink-0">
-                                                {staff.avatarUrl ? (
-                                                    <img src={staff.avatarUrl} alt={staff.name} className="w-full h-full object-cover" />
+                                                {(staff.avatarUrl || (staff.images && staff.images.length > 0)) ? (
+                                                    <img src={staff.avatarUrl || staff.images?.[0]} alt={staff.name} className="w-full h-full object-cover" />
                                                 ) : (
                                                     <div className="w-full h-full flex items-center justify-center font-bold text-xl opacity-50">{staff.name.charAt(0)}</div>
                                                 )}
