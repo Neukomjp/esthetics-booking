@@ -54,7 +54,7 @@ export function BookingSection({ storeId, storeName, slug, themeColor }: Booking
                 className="bg-stone-800 text-white hover:bg-stone-700"
                 style={{ backgroundColor: themeColor }}
             >
-                スタッフから選ぶ
+                キャストから選ぶ
             </Button>
 
             <Button
