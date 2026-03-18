@@ -699,7 +699,7 @@ export function ReserveClient({ store }: ReserveClientProps) {
                 </div>
 
                 {/* Navigation Buttons */}
-                <div className="flex justify-between mt-6 gap-4">
+                <div className={`flex justify-between mt-6 gap-4 ${step >= 2 && selectedServices.length > 0 ? 'pb-20' : ''}`}>
                     {step > 1 ? (
                         <Button variant="outline" onClick={() => setStep(step - 1)} className="border-white/10 hover:bg-white/5">
                             <ArrowLeft className="h-4 w-4 mr-1" /> 戻る
@@ -730,20 +730,38 @@ export function ReserveClient({ store }: ReserveClientProps) {
                     )}
                 </div>
 
-                {/* Summary Bar (mobile) */}
+                {/* Fixed Bottom Bar with summary + navigation */}
                 {step >= 2 && selectedServices.length > 0 && (
                     <div className="fixed bottom-0 left-0 right-0 z-40 border-t border-white/10 p-3 backdrop-blur-xl" style={{ backgroundColor: `${store.headerBgColor}f0` }}>
-                        <div className="max-w-3xl mx-auto flex items-center justify-between text-sm">
-                            <div>
-                                <div className="opacity-50 text-xs">{selectedServiceObjects.map(s => s.name).join(' + ')}</div>
+                        <div className="max-w-3xl mx-auto flex items-center justify-between text-sm gap-3">
+                            <div className="flex-1 min-w-0">
+                                <div className="opacity-50 text-xs truncate">{selectedServiceObjects.map(s => s.name).join(' + ')}</div>
                                 <div className="font-bold" style={{ color: store.themeColor }}>
                                     ¥{totalPrice.toLocaleString()} / {totalDuration}分
+                                    {date && time && <span className="opacity-50 text-xs ml-2">{date.toLocaleDateString('ja-JP', { month: 'short', day: 'numeric' })} {time}〜</span>}
                                 </div>
                             </div>
-                            {date && time && (
-                                <div className="text-right text-xs opacity-60">
-                                    {date.toLocaleDateString('ja-JP', { month: 'short', day: 'numeric' })} {time}〜
-                                </div>
+                            {step < 5 ? (
+                                <Button
+                                    onClick={() => setStep(step + 1)}
+                                    disabled={!canProceed()}
+                                    size="sm"
+                                    className="px-6 font-bold text-black shrink-0"
+                                    style={{ backgroundColor: canProceed() ? store.themeColor : undefined }}
+                                >
+                                    次へ <ChevronRight className="h-4 w-4 ml-0.5" />
+                                </Button>
+                            ) : (
+                                <Button
+                                    onClick={handleSubmit}
+                                    disabled={submitting}
+                                    size="sm"
+                                    className="px-6 font-bold text-black shrink-0"
+                                    style={{ backgroundColor: store.themeColor }}
+                                >
+                                    {submitting ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : null}
+                                    {submitting ? '処理中' : '予約確定'}
+                                </Button>
                             )}
                         </div>
                     </div>
