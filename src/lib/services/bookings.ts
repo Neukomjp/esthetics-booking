@@ -200,14 +200,15 @@ export const bookingService = {
             if (staffId && staffId !== 'no-preference') {
                 staffIds = [staffId]
             } else {
+                // Query staff table directly (store_staff junction table may not exist)
                 const { data: staff, error: staffError } = await supabase
-                    .from('store_staff')
-                    .select('staff_id')
+                    .from('staff')
+                    .select('id')
                     .eq('store_id', storeId)
 
                 if (staffError) throw staffError
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                staffIds = staff?.map((s: any) => s.staff_id) || []
+                staffIds = staff?.map((s: any) => s.id) || []
             }
 
             if (staffIds.length === 0) return []
