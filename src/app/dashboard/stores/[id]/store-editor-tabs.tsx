@@ -40,7 +40,7 @@ export function StoreEditorTabs({ store, allStores = [], initialTab = 'basic' }:
                     <TabsTrigger value="basic">基本情報</TabsTrigger>
                     <TabsTrigger value="design">ページデザイン</TabsTrigger>
                     <TabsTrigger value="menu">メニュー管理</TabsTrigger>
-                    <TabsTrigger value="staff">スタッフ管理</TabsTrigger>
+                    <TabsTrigger value="staff">キャスト管理</TabsTrigger>
                     <TabsTrigger value="news">お知らせ管理</TabsTrigger>
                     <TabsTrigger value="shift">シフト管理</TabsTrigger>
 
@@ -82,9 +82,9 @@ export function StoreEditorTabs({ store, allStores = [], initialTab = 'basic' }:
                 <TabsContent value="staff" className="space-y-4">
                     <Card>
                         <CardHeader>
-                            <CardTitle>スタッフ管理</CardTitle>
+                            <CardTitle>キャスト管理</CardTitle>
                             <CardDescription>
-                                スタッフの登録・編集を行います。
+                                キャストの登録・編集を行います。
                             </CardDescription>
                         </CardHeader>
                         <CardContent>

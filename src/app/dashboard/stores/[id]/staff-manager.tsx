@@ -77,7 +77,7 @@ export function StaffManager({ storeId }: StaffManagerProps) {
             setStaffList(data)
         } catch (error) {
             console.error('Error loading staff:', error)
-            toast.error('スタッフ情報の取得に失敗しました')
+            toast.error('キャスト情報の取得に失敗しました')
         }
     }
 
@@ -176,7 +176,7 @@ export function StaffManager({ storeId }: StaffManagerProps) {
                     is_new_face: formData.is_new_face
                 })
                 setStaffList(staffList.map(s => s.id === updated.id ? updated : s))
-                toast.success('スタッフ情報を更新しました')
+                toast.success('キャスト情報を更新しました')
             } else {
                 // Add
                 const added = await staffService.addStaff({
@@ -207,7 +207,7 @@ export function StaffManager({ storeId }: StaffManagerProps) {
                     is_new_face: formData.is_new_face
                 })
                 setStaffList([added, ...staffList])
-                toast.success('スタッフを追加しました')
+                toast.success('キャストを追加しました')
             }
             setIsDialogOpen(false)
         } catch (error) {
@@ -223,10 +223,10 @@ export function StaffManager({ storeId }: StaffManagerProps) {
         try {
             await staffService.deleteStaff(staffToDelete.id)
             setStaffList(staffList.filter(s => s.id !== staffToDelete.id))
-            toast.success('スタッフを削除しました')
+            toast.success('キャストを削除しました')
         } catch (error) {
             console.error('Error deleting staff:', error)
-            toast.error('スタッフの削除に失敗しました')
+            toast.error('キャストの削除に失敗しました')
         } finally {
             setStaffToDelete(null)
         }
@@ -235,16 +235,16 @@ export function StaffManager({ storeId }: StaffManagerProps) {
     return (
         <div className="space-y-4">
             <div className="flex justify-between items-center">
-                <h3 className="text-lg font-medium">スタッフ一覧</h3>
+                <h3 className="text-lg font-medium">キャスト一覧</h3>
                 <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                     <DialogTrigger asChild>
-                        <Button size="sm"><Plus className="mr-2 h-4 w-4" /> スタッフを追加</Button>
+                        <Button size="sm"><Plus className="mr-2 h-4 w-4" /> キャストを追加</Button>
                     </DialogTrigger>
                     <DialogContent className="sm:max-w-[500px] max-h-[90vh] flex flex-col">
                         <DialogHeader>
-                            <DialogTitle>{editingStaff ? 'スタッフ情報の編集' : '新しいスタッフを追加'}</DialogTitle>
+                            <DialogTitle>{editingStaff ? 'キャスト情報の編集' : '新しいキャストを追加'}</DialogTitle>
                             <DialogDescription>
-                                スタッフの基本情報を入力してください。
+                                キャストの基本情報を入力してください。
                             </DialogDescription>
                         </DialogHeader>
                         <div className="grid gap-4 py-4 px-1 max-h-[60vh] overflow-y-auto w-full overflow-x-hidden">
@@ -297,7 +297,7 @@ export function StaffManager({ storeId }: StaffManagerProps) {
                                     className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 col-span-3"
                                     value={formData.bio}
                                     onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
-                                    placeholder="スタッフの自己紹介文を入力してください"
+                                    placeholder="キャストの自己紹介文を入力してください"
                                 />
                             </div>
                             <div className="grid grid-cols-4 items-center gap-4">
@@ -552,7 +552,7 @@ export function StaffManager({ storeId }: StaffManagerProps) {
                     <AlertDialogHeader>
                         <AlertDialogTitle>本当に削除しますか？</AlertDialogTitle>
                         <AlertDialogDescription>
-                            「{staffToDelete?.name}」のスタッフ情報を削除します。この操作は取り消せません。設定されていたシフト情報も同時に削除される場合があります。
+                            「{staffToDelete?.name}」のキャスト情報を削除します。この操作は取り消せません。設定されていたシフト情報も同時に削除される場合があります。
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>

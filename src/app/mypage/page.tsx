@@ -122,7 +122,7 @@ export default function MyPage() {
                                                 </div>
                                             )}
                                             <div className="flex items-center gap-2 text-sm">
-                                                <Badge variant="outline">スタッフ</Badge>
+                                                <Badge variant="outline">キャスト</Badge>
                                                 <span>{booking.staff?.name || '指名なし'}</span>
                                             </div>
                                             <div className="flex items-center gap-2 text-sm">

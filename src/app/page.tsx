@@ -27,7 +27,7 @@ export default function Home() {
             サロン予約システムで <br /> ビジネスを加速させる
           </h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto mb-10">
-            Next.jsとSupabaseを活用した、マルチ決済、店舗ページ作成、スタッフ管理のための包括的なプラットフォーム。
+            Next.jsとSupabaseを活用した、マルチ決済、店舗ページ作成、キャスト管理のための包括的なプラットフォーム。
           </p>
           <div className="flex justify-center gap-4">
             <Link href="/login">
@@ -57,8 +57,8 @@ export default function Home() {
               <div className="h-12 w-12 bg-green-100 rounded-lg flex items-center justify-center mb-4 text-green-600">
                 <CheckCircle2 className="h-6 w-6" />
               </div>
-              <h3 className="text-xl font-bold mb-2">スタッフ管理</h3>
-              <p className="text-gray-600">スタッフのプロフィール、シフト、予約を効率的に管理します。</p>
+              <h3 className="text-xl font-bold mb-2">キャスト管理</h3>
+              <p className="text-gray-600">キャストのプロフィール、シフト、予約を効率的に管理します。</p>
             </div>
             <div className="p-6 bg-white rounded-xl shadow-sm border hover:shadow-md transition-shadow">
               <div className="h-12 w-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4 text-purple-600">

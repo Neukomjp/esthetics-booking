@@ -272,7 +272,7 @@ export function EmailSettings({ store }: EmailSettingsProps) {
                         <Textarea
                             id="body"
                             className="min-h-[200px] font-mono text-sm"
-                            placeholder={`{{customerName}} 様\n\nご予約ありがとうございます。\n以下の内容で予約を承りました。\n\n日時: {{date}} {{time}}\nメニュー: {{serviceName}}\nスタッフ: {{staffName}}\n\nご来店をお待ちしております。\n\n{{storeName}}`}
+                            placeholder={`{{customerName}} 様\n\nご予約ありがとうございます。\n以下の内容で予約を承りました。\n\n日時: {{date}} {{time}}\nメニュー: {{serviceName}}\nキャスト: {{staffName}}\n\nご来店をお待ちしております。\n\n{{storeName}}`}
                             value={config.booking_confirmation?.body || ''}
                             onChange={(e) => updateTemplate('booking_confirmation', 'body', e.target.value)}
                         />

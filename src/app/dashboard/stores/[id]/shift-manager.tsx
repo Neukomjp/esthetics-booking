@@ -128,7 +128,7 @@ export function ShiftManager({ storeId }: ShiftManagerProps) {
             <div className="flex justify-between items-center">
                 <div>
                     <h3 className="text-lg font-medium">シフト管理</h3>
-                    <p className="text-sm text-gray-500">スタッフごとの週間シフトを設定します。</p>
+                    <p className="text-sm text-gray-500">キャストごとの週間シフトを設定します。</p>
                 </div>
                 <Button variant="outline" onClick={loadData} size="sm">
                     <Loader2 className={`mr - 2 h - 4 w - 4 ${loading ? 'animate-spin' : ''} `} />
@@ -147,7 +147,7 @@ export function ShiftManager({ storeId }: ShiftManagerProps) {
                         <div className="flex items-center gap-2">
                             <Select value={selectedMonthStaffId} onValueChange={setSelectedMonthStaffId}>
                                 <SelectTrigger className="w-[180px]">
-                                    <SelectValue placeholder="スタッフを選択" />
+                                    <SelectValue placeholder="キャストを選択" />
                                 </SelectTrigger>
                                 <SelectContent>
                                     <SelectItem value="all">全員を表示</SelectItem>
@@ -178,7 +178,7 @@ export function ShiftManager({ storeId }: ShiftManagerProps) {
                                 <Table className="min-w-max">
                                     <TableHeader>
                                         <TableRow>
-                                            <TableHead className="w-[150px]">スタッフ</TableHead>
+                                            <TableHead className="w-[150px]">キャスト</TableHead>
                                             {DAYS_OF_WEEK.map((day, i) => (
                                                 <TableHead key={i} className={`text - center ${i === 0 ? 'text-red-500' : i === 6 ? 'text-blue-500' : ''} `}>
                                                     {day}
@@ -241,7 +241,7 @@ export function ShiftManager({ storeId }: ShiftManagerProps) {
                                         {!loading && staffList.length === 0 && (
                                             <TableRow>
                                                 <TableCell colSpan={9} className="text-center py-8 text-gray-400">
-                                                    スタッフが登録されていません
+                                                    キャストが登録されていません
                                                 </TableCell>
                                             </TableRow>
                                         )}
@@ -257,7 +257,7 @@ export function ShiftManager({ storeId }: ShiftManagerProps) {
                         <CardContent className="p-4">
                             {!selectedMonthStaffId ? (
                                 <div className="text-center py-12 text-gray-500">
-                                    スタッフを選択してください
+                                    キャストを選択してください
                                 </div>
                             ) : (
                                 <div className="border rounded-md">

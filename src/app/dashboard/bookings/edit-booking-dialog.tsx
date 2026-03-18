@@ -297,7 +297,7 @@ export function EditBookingDialog({ booking, storeId, trigger, onOpenChange }: E
                             )}
 
                             <div className="space-y-2">
-                                <Label>スタッフ指名</Label>
+                                <Label>キャスト指名</Label>
                                 <Select value={selectedStaff} onValueChange={setSelectedStaff}>
                                     <SelectTrigger>
                                         <SelectValue placeholder="指名なし" />

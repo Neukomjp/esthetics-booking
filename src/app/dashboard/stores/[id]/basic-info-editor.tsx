@@ -176,7 +176,7 @@ export function BasicInfoEditor({ store, allStores = [] }: BasicInfoEditorProps)
                     <div className="grid gap-4 border-t pt-4">
                         <h3 className="font-semibold text-lg">他店舗からの移動時間設定</h3>
                         <p className="text-sm text-muted-foreground">
-                            スタッフが同日に別店舗でシフトや予約を持っている場合、その店舗との間に自動で確保する予約不可時間（移動バッファ）を分単位で設定します。未設定の場合はデフォルトで60分が適用されます。
+                            キャストが同日に別店舗でシフトや予約を持っている場合、その店舗との間に自動で確保する予約不可時間（移動バッファ）を分単位で設定します。未設定の場合はデフォルトで60分が適用されます。
                         </p>
                         <div className="space-y-3">
                             {allStores.filter(s => s.id !== store.id).map(otherStore => (

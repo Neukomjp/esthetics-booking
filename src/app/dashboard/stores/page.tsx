@@ -113,7 +113,7 @@ export default function StoresPage() {
                                 </Button>
                                 <Button variant="outline" size="sm" className="px-2" asChild>
                                     <Link href={`/dashboard/stores/${store.id}?tab=staff`}>
-                                        <Users className="mr-1 h-4 w-4" /> スタッフ
+                                        <Users className="mr-1 h-4 w-4" /> キャスト
                                     </Link>
                                 </Button>
                             </div>

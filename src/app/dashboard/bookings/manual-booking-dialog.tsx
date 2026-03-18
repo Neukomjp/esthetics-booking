@@ -403,7 +403,7 @@ export function ManualBookingDialog({ storeId, onBookingCreated }: ManualBooking
                                         </div>
                                     </div>
 
-                                    <Label>スタッフ指名</Label>
+                                    <Label>キャスト指名</Label>
                                     <Select value={selectedStaff} onValueChange={setSelectedStaff}>
                                         <SelectTrigger>
                                             <SelectValue placeholder="指名なし" />

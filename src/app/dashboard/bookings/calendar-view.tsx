@@ -76,10 +76,10 @@ export function BookingCalendar({ initialBookings, storeId, defaultDate }: Booki
                 <div className="w-full md:w-[200px]">
                     <Select value={selectedStaff} onValueChange={setSelectedStaff}>
                         <SelectTrigger>
-                            <SelectValue placeholder="スタッフで絞り込み" />
+                            <SelectValue placeholder="キャストで絞り込み" />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="all">全てのスタッフ</SelectItem>
+                            <SelectItem value="all">全てのキャスト</SelectItem>
                             {staffList.map(staff => (
                                 <SelectItem key={staff.id} value={staff.id}>{staff.name}</SelectItem>
                             ))}
