@@ -1,9 +1,12 @@
 'use client'
 
+import { useState } from 'react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line, ComposedChart } from 'recharts'
+import { Button } from '@/components/ui/button'
+import { BarChart3, LineChart as LineChartIcon } from 'lucide-react'
 
 interface ReportsClientProps {
     dailySalesData: any[]
@@ -13,20 +16,49 @@ interface ReportsClientProps {
 }
 
 export function ReportsClient({ dailySalesData, weeklySalesData, monthlySalesData, castSalesData }: ReportsClientProps) {
+    const [chartType, setChartType] = useState<'bar' | 'line'>('bar')
 
     // Helper for formatting YAxis (currency)
     const formatYAxis = (tickItem: number) => {
         return new Intl.NumberFormat('ja-JP', { notation: "compact", compactDisplay: "short" }).format(tickItem);
     }
 
+    const renderSalesData = (fillColor: string) => {
+        if (chartType === 'bar') {
+            return <Bar yAxisId="left" dataKey="sales" name="売上" fill={fillColor} radius={[4, 4, 0, 0]} />
+        }
+        return <Line yAxisId="left" type="monotone" dataKey="sales" name="売上" stroke={fillColor} strokeWidth={3} />
+    }
+
     return (
         <Tabs defaultValue="cast" className="space-y-4">
-            <TabsList className="bg-white border border-gray-200">
-                <TabsTrigger value="cast" className="text-[13px] data-[state=active]:bg-gray-100">キャスト別</TabsTrigger>
-                <TabsTrigger value="daily" className="text-[13px] data-[state=active]:bg-gray-100">日別推移</TabsTrigger>
-                <TabsTrigger value="weekly" className="text-[13px] data-[state=active]:bg-gray-100">週別推移</TabsTrigger>
-                <TabsTrigger value="monthly" className="text-[13px] data-[state=active]:bg-gray-100">月別推移</TabsTrigger>
-            </TabsList>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <TabsList className="bg-white border border-gray-200">
+                    <TabsTrigger value="cast" className="text-[13px] data-[state=active]:bg-gray-100">キャスト別</TabsTrigger>
+                    <TabsTrigger value="daily" className="text-[13px] data-[state=active]:bg-gray-100">日別推移</TabsTrigger>
+                    <TabsTrigger value="weekly" className="text-[13px] data-[state=active]:bg-gray-100">週別推移</TabsTrigger>
+                    <TabsTrigger value="monthly" className="text-[13px] data-[state=active]:bg-gray-100">月別推移</TabsTrigger>
+                </TabsList>
+
+                <div className="flex items-center gap-2 bg-white border border-gray-200 p-1 rounded-md w-fit">
+                    <Button 
+                        variant={chartType === 'bar' ? 'default' : 'ghost'} 
+                        size="sm" 
+                        onClick={() => setChartType('bar')}
+                        className="h-7 text-xs px-2"
+                    >
+                        <BarChart3 className="w-3.5 h-3.5 mr-1" /> 棒グラフ
+                    </Button>
+                    <Button 
+                        variant={chartType === 'line' ? 'default' : 'ghost'} 
+                        size="sm" 
+                        onClick={() => setChartType('line')}
+                        className="h-7 text-xs px-2"
+                    >
+                        <LineChartIcon className="w-3.5 h-3.5 mr-1" /> 折れ線
+                    </Button>
+                </div>
+            </div>
 
             {/* CAST REPORT */}
             <TabsContent value="cast">
@@ -96,7 +128,7 @@ export function ReportsClient({ dailySalesData, weeklySalesData, monthlySalesDat
                                 <YAxis yAxisId="right" orientation="right" />
                                 <Tooltip formatter={(value: number, name: string) => name === '売上' ? `¥${value.toLocaleString()}` : `${value}件`} />
                                 <Legend />
-                                <Bar yAxisId="left" dataKey="sales" name="売上" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+                                {renderSalesData("#3b82f6")}
                                 <Line yAxisId="right" type="monotone" dataKey="bookings" name="予約件数" stroke="#f59e0b" strokeWidth={2} />
                             </ComposedChart>
                         </ResponsiveContainer>
@@ -120,7 +152,7 @@ export function ReportsClient({ dailySalesData, weeklySalesData, monthlySalesDat
                                 <YAxis yAxisId="right" orientation="right" />
                                 <Tooltip formatter={(value: number, name: string) => name === '売上' ? `¥${value.toLocaleString()}` : `${value}件`} />
                                 <Legend />
-                                <Bar yAxisId="left" dataKey="sales" name="売上" fill="#8b5cf6" radius={[4, 4, 0, 0]} />
+                                {renderSalesData("#8b5cf6")}
                                 <Line yAxisId="right" type="monotone" dataKey="bookings" name="予約件数" stroke="#ec4899" strokeWidth={2} />
                             </ComposedChart>
                         </ResponsiveContainer>
@@ -144,7 +176,7 @@ export function ReportsClient({ dailySalesData, weeklySalesData, monthlySalesDat
                                 <YAxis yAxisId="right" orientation="right" />
                                 <Tooltip formatter={(value: number, name: string) => name === '売上' ? `¥${value.toLocaleString()}` : `${value}件`} />
                                 <Legend />
-                                <Bar yAxisId="left" dataKey="sales" name="売上" fill="#10b981" radius={[4, 4, 0, 0]} />
+                                {renderSalesData("#10b981")}
                                 <Line yAxisId="right" type="monotone" dataKey="bookings" name="予約件数" stroke="#f97316" strokeWidth={2} />
                             </ComposedChart>
                         </ResponsiveContainer>
