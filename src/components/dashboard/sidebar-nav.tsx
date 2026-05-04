@@ -25,15 +25,22 @@ export function SidebarNav({ role }: SidebarNavProps) {
 
     const navItems = [
         { href: '/dashboard', label: 'ホーム', icon: LayoutDashboard, show: true },
+        { href: '/dashboard/reports', label: 'レポート分析', icon: LayoutDashboard, show: true },
         { href: '/dashboard/schedules', label: 'スケジュール', icon: Clock, show: true },
         { href: '/dashboard/shifts', label: 'シフト', icon: Briefcase, show: true },
         { href: '/dashboard/bookings', label: '予約', icon: Calendar, show: true },
         { href: '/dashboard/customers', label: '顧客', icon: Users, show: canViewCustomers(role as any) },
         { href: '/dashboard/staff', label: 'キャスト', icon: Users, show: true },
+        { href: '/dashboard/guarantees', label: '日払い・給与', icon: CreditCard, show: true },
+        { href: '/dashboard/expenses', label: '経費・出金', icon: CreditCard, show: true },
         { href: '/dashboard/services', label: '料金システム', icon: CreditCard, show: true },
-        { href: '/dashboard/stores', label: '店舗', icon: Store, show: canViewStores(role as any) },
+        { href: '/dashboard/stores', label: '店舗・ルーム', icon: Store, show: canViewStores(role as any) },
+        { href: '/dashboard/regions', label: 'エリア管理', icon: Store, show: true },
         { href: '/dashboard/coupons', label: 'クーポン', icon: Ticket, show: canViewCoupons(role as any) },
-        { href: '/dashboard/payments', label: '決済・売上', icon: CreditCard, show: canViewPayments(role as any) },
+        { href: '/dashboard/payments', label: '決済サマリー', icon: CreditCard, show: canViewPayments(role as any) },
+        { href: '/dashboard/tweets', label: '自動ツイート', icon: MonitorPlay, show: true },
+        { href: '/dashboard/scripts', label: '定型文・スクリプト', icon: MonitorPlay, show: true },
+        { href: '/dashboard/internal-staff', label: '内勤スタッフ', icon: Users, show: true },
         { href: '/dashboard/settings', label: '設定', icon: Settings, show: canManageSettings(role as any) },
     ];
 
