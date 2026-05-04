@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -21,6 +21,11 @@ export function GuaranteesClient({ initialPayouts, storeId, targetDate }: Guaran
     const [isCalculating, setIsCalculating] = useState(false)
     const [currentDate, setCurrentDate] = useState(targetDate)
     const router = useRouter()
+    
+    useEffect(() => {
+        setPayouts(initialPayouts)
+        setCurrentDate(targetDate)
+    }, [initialPayouts, targetDate])
 
     const totalPayout = payouts.reduce((sum, p) => sum + (p.total_amount || 0), 0)
 
