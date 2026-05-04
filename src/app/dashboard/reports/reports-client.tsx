@@ -36,6 +36,17 @@ export function ReportsClient({ dailySalesData, weeklySalesData, monthlySalesDat
                         <CardDescription>各キャストの予約数と売上貢献度</CardDescription>
                     </CardHeader>
                     <CardContent>
+                        <div className="mb-8 h-[300px]">
+                            <ResponsiveContainer width="100%" height="100%">
+                                <BarChart data={castSalesData} layout="vertical" margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+                                    <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} />
+                                    <XAxis type="number" tickFormatter={formatYAxis} />
+                                    <YAxis dataKey="name" type="category" width={100} tick={{ fontSize: 12 }} />
+                                    <Tooltip formatter={(value: number) => `¥${value.toLocaleString()}`} />
+                                    <Bar dataKey="totalSales" name="総売上" fill="#6366f1" radius={[0, 4, 4, 0]} barSize={20} />
+                                </BarChart>
+                            </ResponsiveContainer>
+                        </div>
                         <div className="border border-gray-200 rounded-sm bg-white overflow-x-auto">
                             <Table className="min-w-max">
                                 <TableHeader>
