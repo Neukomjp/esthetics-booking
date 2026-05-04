@@ -1,4 +1,4 @@
-import { BookingCalendar } from './calendar-view'
+import { BookingList } from './list-view'
 import { bookingService } from '@/lib/services/bookings'
 import { storeService } from '@/lib/services/stores'
 import { ManualBookingDialog } from './manual-booking-dialog'
@@ -51,7 +51,7 @@ export default async function BookingsPage(props: Props) {
                 </div>
                 <ManualBookingDialog storeId={storeId} />
             </div>
-            <BookingCalendar initialBookings={bookings} storeId={storeId} defaultDate={today.toISOString()} />
+            <BookingList initialBookings={bookings} storeId={storeId} />
         </div>
     )
 }

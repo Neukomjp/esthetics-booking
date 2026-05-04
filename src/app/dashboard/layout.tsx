@@ -11,7 +11,8 @@ import {
     Menu
 } from 'lucide-react'
 import { OrganizationSwitcher } from '@/components/organization-switcher'
-import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetClose } from '@/components/ui/sheet'
+import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet'
+import { SidebarNav } from '@/components/dashboard/sidebar-nav'
 import { LogoutButton } from '@/components/logout-button'
 
 import { cookies } from 'next/headers'
@@ -37,62 +38,19 @@ export default async function DashboardLayout({
     const role = currentOrg?.role || 'member'
 
     return (
-        <div className="flex flex-col md:flex-row min-h-screen bg-gray-100">
+        <div className="flex flex-col md:flex-row min-h-screen bg-[#f5f5f5]">
             {/* Sidebar (Desktop) */}
-            <aside className="w-64 bg-white shadow-md hidden md:flex flex-col shrink-0">
-                <div className="p-6">
-                    <Link href="/dashboard" className="flex items-center gap-2 mb-4">
-                        <h1 className="text-xl font-bold text-gray-800">サロン予約システム</h1>
+            <aside className="w-[200px] bg-white border-r border-gray-200 hidden md:flex flex-col shrink-0">
+                <div className="p-4 border-b border-gray-100">
+                    <Link href="/dashboard" className="flex items-center gap-2 mb-2">
+                        <h1 className="text-base font-bold text-gray-800 tracking-tight">サロン予約システム</h1>
                     </Link>
                     <OrganizationSwitcher currentOrgId={orgId} />
                 </div>
-                <nav className="flex-1 px-4 space-y-2">
-                    <Link href="/dashboard" className="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg">
-                        <LayoutDashboard className="mr-3 h-5 w-5" />
-                        ダッシュボード
-                    </Link>
-
-                    {canViewStores(role as any) && (
-                        <Link href="/dashboard/stores" className="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg">
-                            <Store className="mr-3 h-5 w-5" />
-                            店舗管理
-                        </Link>
-                    )}
-
-                    <Link href="/dashboard/bookings" className="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg">
-                        <Calendar className="mr-3 h-5 w-5" />
-                        予約管理
-                    </Link>
-
-                    {canViewCustomers(role as any) && (
-                        <Link href="/dashboard/customers" className="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg">
-                            <Users className="mr-3 h-5 w-5" />
-                            顧客管理
-                        </Link>
-                    )}
-
-                    {canViewCoupons(role as any) && (
-                        <Link href="/dashboard/coupons" className="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg">
-                            <Ticket className="mr-3 h-5 w-5" />
-                            クーポン管理
-                        </Link>
-                    )}
-
-                    {canViewPayments(role as any) && (
-                        <Link href="/dashboard/payments" className="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg">
-                            <CreditCard className="mr-3 h-5 w-5" />
-                            決済・売上
-                        </Link>
-                    )}
-
-                    {canManageSettings(role as any) && (
-                        <Link href="/dashboard/settings" className="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg">
-                            <Settings className="mr-3 h-5 w-5" />
-                            設定
-                        </Link>
-                    )}
-                </nav>
-                <div className="p-4 border-t">
+                <div className="py-2 flex-1 overflow-y-auto">
+                    <SidebarNav role={role as any} />
+                </div>
+                <div className="p-4 border-t border-gray-200">
                     <LogoutButton />
                 </div>
             </aside>
@@ -119,74 +77,17 @@ export default async function DashboardLayout({
                                 </Link>
                                 <OrganizationSwitcher currentOrgId={orgId} />
                             </div>
-                            <nav className="flex-1 px-4 space-y-2 overflow-y-auto mt-4">
-                                <SheetClose asChild>
-                                    <Link href="/dashboard" className="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg">
-                                        <LayoutDashboard className="mr-3 h-5 w-5" />
-                                        ダッシュボード
-                                    </Link>
-                                </SheetClose>
-
-                                {canViewStores(role as any) && (
-                                    <SheetClose asChild>
-                                        <Link href="/dashboard/stores" className="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg">
-                                            <Store className="mr-3 h-5 w-5" />
-                                            店舗管理
-                                        </Link>
-                                    </SheetClose>
-                                )}
-
-                                <SheetClose asChild>
-                                    <Link href="/dashboard/bookings" className="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg">
-                                        <Calendar className="mr-3 h-5 w-5" />
-                                        予約管理
-                                    </Link>
-                                </SheetClose>
-
-                                {canViewCustomers(role as any) && (
-                                    <SheetClose asChild>
-                                        <Link href="/dashboard/customers" className="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg">
-                                            <Users className="mr-3 h-5 w-5" />
-                                            顧客管理
-                                        </Link>
-                                    </SheetClose>
-                                )}
-
-                                {canViewCoupons(role as any) && (
-                                    <SheetClose asChild>
-                                        <Link href="/dashboard/coupons" className="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg">
-                                            <Ticket className="mr-3 h-5 w-5" />
-                                            クーポン管理
-                                        </Link>
-                                    </SheetClose>
-                                )}
-
-                                {canViewPayments(role as any) && (
-                                    <SheetClose asChild>
-                                        <Link href="/dashboard/payments" className="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg">
-                                            <CreditCard className="mr-3 h-5 w-5" />
-                                            決済・売上
-                                        </Link>
-                                    </SheetClose>
-                                )}
-
-                                {canManageSettings(role as any) && (
-                                    <SheetClose asChild>
-                                        <Link href="/dashboard/settings" className="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg">
-                                            <Settings className="mr-3 h-5 w-5" />
-                                            設定
-                                        </Link>
-                                    </SheetClose>
-                                )}
-                            </nav>
-                            <div className="p-4 border-t mt-auto">
+                            <div className="py-2 flex-1 overflow-y-auto">
+                                <SidebarNav role={role as any} />
+                            </div>
+                            <div className="p-4 border-t mt-auto border-gray-200">
                                 <LogoutButton />
                             </div>
                         </SheetContent>
                     </Sheet>
                 </header>
 
-                <div className="flex-1 p-4 md:p-8 overflow-y-auto">
+                <div className="flex-1 p-4 md:p-6 overflow-y-auto">
                     {children}
                 </div>
             </main>
