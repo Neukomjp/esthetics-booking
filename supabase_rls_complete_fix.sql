@@ -140,6 +140,7 @@ DROP POLICY IF EXISTS "customer_tickets_delete" ON customer_tickets;
 -- ============================================================================
 
 DROP POLICY IF EXISTS "org_select" ON organizations;
+DROP POLICY IF EXISTS "org_select" ON organizations;
 CREATE POLICY "org_select" ON organizations FOR SELECT
 USING (
     EXISTS (
@@ -151,9 +152,11 @@ USING (
 );
 
 DROP POLICY IF EXISTS "org_insert" ON organizations;
+DROP POLICY IF EXISTS "org_insert" ON organizations;
 CREATE POLICY "org_insert" ON organizations FOR INSERT
 WITH CHECK (auth.role() = 'authenticated');
 
+DROP POLICY IF EXISTS "org_update" ON organizations;
 DROP POLICY IF EXISTS "org_update" ON organizations;
 CREATE POLICY "org_update" ON organizations FOR UPDATE
 USING (
@@ -165,6 +168,7 @@ USING (
     )
 );
 
+DROP POLICY IF EXISTS "org_delete" ON organizations;
 DROP POLICY IF EXISTS "org_delete" ON organizations;
 CREATE POLICY "org_delete" ON organizations FOR DELETE
 USING (
@@ -181,13 +185,16 @@ USING (
 -- ============================================================================
 
 DROP POLICY IF EXISTS "org_members_select" ON organization_members;
+DROP POLICY IF EXISTS "org_members_select" ON organization_members;
 CREATE POLICY "org_members_select" ON organization_members FOR SELECT
 USING (user_id = auth.uid());
 
 DROP POLICY IF EXISTS "org_members_insert" ON organization_members;
+DROP POLICY IF EXISTS "org_members_insert" ON organization_members;
 CREATE POLICY "org_members_insert" ON organization_members FOR INSERT
 WITH CHECK (user_id = auth.uid());
 
+DROP POLICY IF EXISTS "org_members_delete" ON organization_members;
 DROP POLICY IF EXISTS "org_members_delete" ON organization_members;
 CREATE POLICY "org_members_delete" ON organization_members FOR DELETE
 USING (user_id = auth.uid());
@@ -198,10 +205,12 @@ USING (user_id = auth.uid());
 
 -- Public: can view published stores (for booking portal)
 DROP POLICY IF EXISTS "stores_public_select" ON stores;
+DROP POLICY IF EXISTS "stores_public_select" ON stores;
 CREATE POLICY "stores_public_select" ON stores FOR SELECT
 USING (is_published = true);
 
 -- Org members: can view ALL their org's stores (including unpublished)
+DROP POLICY IF EXISTS "stores_org_select" ON stores;
 DROP POLICY IF EXISTS "stores_org_select" ON stores;
 CREATE POLICY "stores_org_select" ON stores FOR SELECT
 USING (
@@ -215,6 +224,7 @@ USING (
 
 -- Org members: can insert stores
 DROP POLICY IF EXISTS "stores_org_insert" ON stores;
+DROP POLICY IF EXISTS "stores_org_insert" ON stores;
 CREATE POLICY "stores_org_insert" ON stores FOR INSERT
 WITH CHECK (
     EXISTS (
@@ -227,6 +237,7 @@ WITH CHECK (
 
 -- Org members: can update stores
 DROP POLICY IF EXISTS "stores_org_update" ON stores;
+DROP POLICY IF EXISTS "stores_org_update" ON stores;
 CREATE POLICY "stores_org_update" ON stores FOR UPDATE
 USING (
     EXISTS (
@@ -238,6 +249,7 @@ USING (
 );
 
 -- Org members: can delete stores
+DROP POLICY IF EXISTS "stores_org_delete" ON stores;
 DROP POLICY IF EXISTS "stores_org_delete" ON stores;
 CREATE POLICY "stores_org_delete" ON stores FOR DELETE
 USING (
@@ -254,6 +266,7 @@ USING (
 -- ============================================================================
 
 DROP POLICY IF EXISTS "staff_public_select" ON staff;
+DROP POLICY IF EXISTS "staff_public_select" ON staff;
 CREATE POLICY "staff_public_select" ON staff FOR SELECT
 USING (
     EXISTS (
@@ -263,6 +276,7 @@ USING (
     )
 );
 
+DROP POLICY IF EXISTS "staff_org_select" ON staff;
 DROP POLICY IF EXISTS "staff_org_select" ON staff;
 CREATE POLICY "staff_org_select" ON staff FOR SELECT
 USING (
@@ -280,6 +294,7 @@ USING (
 );
 
 DROP POLICY IF EXISTS "staff_org_insert" ON staff;
+DROP POLICY IF EXISTS "staff_org_insert" ON staff;
 CREATE POLICY "staff_org_insert" ON staff FOR INSERT
 WITH CHECK (
     EXISTS (
@@ -296,6 +311,7 @@ WITH CHECK (
 );
 
 DROP POLICY IF EXISTS "staff_org_update" ON staff;
+DROP POLICY IF EXISTS "staff_org_update" ON staff;
 CREATE POLICY "staff_org_update" ON staff FOR UPDATE
 USING (
     EXISTS (
@@ -311,6 +327,7 @@ USING (
     )
 );
 
+DROP POLICY IF EXISTS "staff_org_delete" ON staff;
 DROP POLICY IF EXISTS "staff_org_delete" ON staff;
 CREATE POLICY "staff_org_delete" ON staff FOR DELETE
 USING (
@@ -332,6 +349,7 @@ USING (
 -- ============================================================================
 
 DROP POLICY IF EXISTS "shifts_public_select" ON staff_shifts;
+DROP POLICY IF EXISTS "shifts_public_select" ON staff_shifts;
 CREATE POLICY "shifts_public_select" ON staff_shifts FOR SELECT
 USING (
     EXISTS (
@@ -342,6 +360,7 @@ USING (
     )
 );
 
+DROP POLICY IF EXISTS "shifts_org_select" ON staff_shifts;
 DROP POLICY IF EXISTS "shifts_org_select" ON staff_shifts;
 CREATE POLICY "shifts_org_select" ON staff_shifts FOR SELECT
 USING (
@@ -361,6 +380,7 @@ USING (
 );
 
 DROP POLICY IF EXISTS "shifts_org_insert" ON staff_shifts;
+DROP POLICY IF EXISTS "shifts_org_insert" ON staff_shifts;
 CREATE POLICY "shifts_org_insert" ON staff_shifts FOR INSERT
 WITH CHECK (
     EXISTS (
@@ -379,6 +399,7 @@ WITH CHECK (
 );
 
 DROP POLICY IF EXISTS "shifts_org_update" ON staff_shifts;
+DROP POLICY IF EXISTS "shifts_org_update" ON staff_shifts;
 CREATE POLICY "shifts_org_update" ON staff_shifts FOR UPDATE
 USING (
     EXISTS (
@@ -396,6 +417,7 @@ USING (
     )
 );
 
+DROP POLICY IF EXISTS "shifts_org_delete" ON staff_shifts;
 DROP POLICY IF EXISTS "shifts_org_delete" ON staff_shifts;
 CREATE POLICY "shifts_org_delete" ON staff_shifts FOR DELETE
 USING (
@@ -419,6 +441,7 @@ USING (
 -- ============================================================================
 
 DROP POLICY IF EXISTS "shift_exc_public_select" ON staff_shift_exceptions;
+DROP POLICY IF EXISTS "shift_exc_public_select" ON staff_shift_exceptions;
 CREATE POLICY "shift_exc_public_select" ON staff_shift_exceptions FOR SELECT
 USING (
     EXISTS (
@@ -429,6 +452,7 @@ USING (
     )
 );
 
+DROP POLICY IF EXISTS "shift_exc_org_select" ON staff_shift_exceptions;
 DROP POLICY IF EXISTS "shift_exc_org_select" ON staff_shift_exceptions;
 CREATE POLICY "shift_exc_org_select" ON staff_shift_exceptions FOR SELECT
 USING (
@@ -448,6 +472,7 @@ USING (
 );
 
 DROP POLICY IF EXISTS "shift_exc_org_insert" ON staff_shift_exceptions;
+DROP POLICY IF EXISTS "shift_exc_org_insert" ON staff_shift_exceptions;
 CREATE POLICY "shift_exc_org_insert" ON staff_shift_exceptions FOR INSERT
 WITH CHECK (
     EXISTS (
@@ -466,6 +491,7 @@ WITH CHECK (
 );
 
 DROP POLICY IF EXISTS "shift_exc_org_update" ON staff_shift_exceptions;
+DROP POLICY IF EXISTS "shift_exc_org_update" ON staff_shift_exceptions;
 CREATE POLICY "shift_exc_org_update" ON staff_shift_exceptions FOR UPDATE
 USING (
     EXISTS (
@@ -483,6 +509,7 @@ USING (
     )
 );
 
+DROP POLICY IF EXISTS "shift_exc_org_delete" ON staff_shift_exceptions;
 DROP POLICY IF EXISTS "shift_exc_org_delete" ON staff_shift_exceptions;
 CREATE POLICY "shift_exc_org_delete" ON staff_shift_exceptions FOR DELETE
 USING (
@@ -506,6 +533,7 @@ USING (
 -- ============================================================================
 
 DROP POLICY IF EXISTS "services_public_select" ON services;
+DROP POLICY IF EXISTS "services_public_select" ON services;
 CREATE POLICY "services_public_select" ON services FOR SELECT
 USING (
     EXISTS (
@@ -515,6 +543,7 @@ USING (
     )
 );
 
+DROP POLICY IF EXISTS "services_org_select" ON services;
 DROP POLICY IF EXISTS "services_org_select" ON services;
 CREATE POLICY "services_org_select" ON services FOR SELECT
 USING (
@@ -532,6 +561,7 @@ USING (
 );
 
 DROP POLICY IF EXISTS "services_org_insert" ON services;
+DROP POLICY IF EXISTS "services_org_insert" ON services;
 CREATE POLICY "services_org_insert" ON services FOR INSERT
 WITH CHECK (
     EXISTS (
@@ -548,6 +578,7 @@ WITH CHECK (
 );
 
 DROP POLICY IF EXISTS "services_org_update" ON services;
+DROP POLICY IF EXISTS "services_org_update" ON services;
 CREATE POLICY "services_org_update" ON services FOR UPDATE
 USING (
     EXISTS (
@@ -563,6 +594,7 @@ USING (
     )
 );
 
+DROP POLICY IF EXISTS "services_org_delete" ON services;
 DROP POLICY IF EXISTS "services_org_delete" ON services;
 CREATE POLICY "services_org_delete" ON services FOR DELETE
 USING (
@@ -584,6 +616,7 @@ USING (
 -- ============================================================================
 
 DROP POLICY IF EXISTS "svc_opts_public_select" ON service_options;
+DROP POLICY IF EXISTS "svc_opts_public_select" ON service_options;
 CREATE POLICY "svc_opts_public_select" ON service_options FOR SELECT
 USING (
     EXISTS (
@@ -593,6 +626,7 @@ USING (
     )
 );
 
+DROP POLICY IF EXISTS "svc_opts_org_select" ON service_options;
 DROP POLICY IF EXISTS "svc_opts_org_select" ON service_options;
 CREATE POLICY "svc_opts_org_select" ON service_options FOR SELECT
 USING (
@@ -610,6 +644,7 @@ USING (
 );
 
 DROP POLICY IF EXISTS "svc_opts_org_insert" ON service_options;
+DROP POLICY IF EXISTS "svc_opts_org_insert" ON service_options;
 CREATE POLICY "svc_opts_org_insert" ON service_options FOR INSERT
 WITH CHECK (
     EXISTS (
@@ -626,6 +661,7 @@ WITH CHECK (
 );
 
 DROP POLICY IF EXISTS "svc_opts_org_update" ON service_options;
+DROP POLICY IF EXISTS "svc_opts_org_update" ON service_options;
 CREATE POLICY "svc_opts_org_update" ON service_options FOR UPDATE
 USING (
     EXISTS (
@@ -641,6 +677,7 @@ USING (
     )
 );
 
+DROP POLICY IF EXISTS "svc_opts_org_delete" ON service_options;
 DROP POLICY IF EXISTS "svc_opts_org_delete" ON service_options;
 CREATE POLICY "svc_opts_org_delete" ON service_options FOR DELETE
 USING (
@@ -663,10 +700,12 @@ USING (
 
 -- Public insert: needed when a guest makes a booking
 DROP POLICY IF EXISTS "customers_public_insert" ON customers;
+DROP POLICY IF EXISTS "customers_public_insert" ON customers;
 CREATE POLICY "customers_public_insert" ON customers FOR INSERT
 WITH CHECK (true);
 
 -- Org members: can view customers
+DROP POLICY IF EXISTS "customers_org_select" ON customers;
 DROP POLICY IF EXISTS "customers_org_select" ON customers;
 CREATE POLICY "customers_org_select" ON customers FOR SELECT
 USING (
@@ -685,10 +724,12 @@ USING (
 
 -- Logged-in customers can view their own records (for mypage)
 DROP POLICY IF EXISTS "customers_self_select" ON customers;
+DROP POLICY IF EXISTS "customers_self_select" ON customers;
 CREATE POLICY "customers_self_select" ON customers FOR SELECT
 USING (auth_user_id = auth.uid());
 
 -- Org members: can update customers
+DROP POLICY IF EXISTS "customers_org_update" ON customers;
 DROP POLICY IF EXISTS "customers_org_update" ON customers;
 CREATE POLICY "customers_org_update" ON customers FOR UPDATE
 USING (
@@ -706,6 +747,7 @@ USING (
 );
 
 -- Org members: can delete customers
+DROP POLICY IF EXISTS "customers_org_delete" ON customers;
 DROP POLICY IF EXISTS "customers_org_delete" ON customers;
 CREATE POLICY "customers_org_delete" ON customers FOR DELETE
 USING (
@@ -728,10 +770,12 @@ USING (
 
 -- Public insert: anyone can make a booking
 DROP POLICY IF EXISTS "bookings_public_insert" ON bookings;
+DROP POLICY IF EXISTS "bookings_public_insert" ON bookings;
 CREATE POLICY "bookings_public_insert" ON bookings FOR INSERT
 WITH CHECK (true);
 
 -- Public select: needed for availability check (only published stores)
+DROP POLICY IF EXISTS "bookings_public_select" ON bookings;
 DROP POLICY IF EXISTS "bookings_public_select" ON bookings;
 CREATE POLICY "bookings_public_select" ON bookings FOR SELECT
 USING (
@@ -743,6 +787,7 @@ USING (
 );
 
 -- Org members: can view all bookings in their stores
+DROP POLICY IF EXISTS "bookings_org_select" ON bookings;
 DROP POLICY IF EXISTS "bookings_org_select" ON bookings;
 CREATE POLICY "bookings_org_select" ON bookings FOR SELECT
 USING (
@@ -761,6 +806,7 @@ USING (
 
 -- Logged-in customers: can view their own bookings (for mypage)
 DROP POLICY IF EXISTS "bookings_customer_select" ON bookings;
+DROP POLICY IF EXISTS "bookings_customer_select" ON bookings;
 CREATE POLICY "bookings_customer_select" ON bookings FOR SELECT
 USING (
     EXISTS (
@@ -771,6 +817,7 @@ USING (
 );
 
 -- Org members: can update bookings
+DROP POLICY IF EXISTS "bookings_org_update" ON bookings;
 DROP POLICY IF EXISTS "bookings_org_update" ON bookings;
 CREATE POLICY "bookings_org_update" ON bookings FOR UPDATE
 USING (
@@ -789,6 +836,7 @@ USING (
 
 -- Logged-in customers: can update own bookings (for cancel)
 DROP POLICY IF EXISTS "bookings_customer_update" ON bookings;
+DROP POLICY IF EXISTS "bookings_customer_update" ON bookings;
 CREATE POLICY "bookings_customer_update" ON bookings FOR UPDATE
 USING (
     EXISTS (
@@ -799,6 +847,7 @@ USING (
 );
 
 -- Org members: can delete bookings
+DROP POLICY IF EXISTS "bookings_org_delete" ON bookings;
 DROP POLICY IF EXISTS "bookings_org_delete" ON bookings;
 CREATE POLICY "bookings_org_delete" ON bookings FOR DELETE
 USING (
@@ -820,6 +869,7 @@ USING (
 -- ============================================================================
 
 DROP POLICY IF EXISTS "visits_org_select" ON visit_records;
+DROP POLICY IF EXISTS "visits_org_select" ON visit_records;
 CREATE POLICY "visits_org_select" ON visit_records FOR SELECT
 USING (
     EXISTS (
@@ -835,6 +885,7 @@ USING (
     )
 );
 
+DROP POLICY IF EXISTS "visits_org_insert" ON visit_records;
 DROP POLICY IF EXISTS "visits_org_insert" ON visit_records;
 CREATE POLICY "visits_org_insert" ON visit_records FOR INSERT
 WITH CHECK (
@@ -852,6 +903,7 @@ WITH CHECK (
 );
 
 DROP POLICY IF EXISTS "visits_org_update" ON visit_records;
+DROP POLICY IF EXISTS "visits_org_update" ON visit_records;
 CREATE POLICY "visits_org_update" ON visit_records FOR UPDATE
 USING (
     EXISTS (
@@ -867,6 +919,7 @@ USING (
     )
 );
 
+DROP POLICY IF EXISTS "visits_org_delete" ON visit_records;
 DROP POLICY IF EXISTS "visits_org_delete" ON visit_records;
 CREATE POLICY "visits_org_delete" ON visit_records FOR DELETE
 USING (
@@ -888,6 +941,7 @@ USING (
 -- ============================================================================
 
 DROP POLICY IF EXISTS "coupons_public_select" ON coupons;
+DROP POLICY IF EXISTS "coupons_public_select" ON coupons;
 CREATE POLICY "coupons_public_select" ON coupons FOR SELECT
 USING (
     EXISTS (
@@ -897,6 +951,7 @@ USING (
     )
 );
 
+DROP POLICY IF EXISTS "coupons_org_select" ON coupons;
 DROP POLICY IF EXISTS "coupons_org_select" ON coupons;
 CREATE POLICY "coupons_org_select" ON coupons FOR SELECT
 USING (
@@ -914,6 +969,7 @@ USING (
 );
 
 DROP POLICY IF EXISTS "coupons_org_insert" ON coupons;
+DROP POLICY IF EXISTS "coupons_org_insert" ON coupons;
 CREATE POLICY "coupons_org_insert" ON coupons FOR INSERT
 WITH CHECK (
     EXISTS (
@@ -930,6 +986,7 @@ WITH CHECK (
 );
 
 DROP POLICY IF EXISTS "coupons_org_update" ON coupons;
+DROP POLICY IF EXISTS "coupons_org_update" ON coupons;
 CREATE POLICY "coupons_org_update" ON coupons FOR UPDATE
 USING (
     EXISTS (
@@ -945,6 +1002,7 @@ USING (
     )
 );
 
+DROP POLICY IF EXISTS "coupons_org_delete" ON coupons;
 DROP POLICY IF EXISTS "coupons_org_delete" ON coupons;
 CREATE POLICY "coupons_org_delete" ON coupons FOR DELETE
 USING (
@@ -966,6 +1024,7 @@ USING (
 -- ============================================================================
 
 DROP POLICY IF EXISTS "ticket_masters_public_select" ON ticket_masters;
+DROP POLICY IF EXISTS "ticket_masters_public_select" ON ticket_masters;
 CREATE POLICY "ticket_masters_public_select" ON ticket_masters FOR SELECT
 USING (
     EXISTS (
@@ -975,6 +1034,7 @@ USING (
     )
 );
 
+DROP POLICY IF EXISTS "ticket_masters_org_select" ON ticket_masters;
 DROP POLICY IF EXISTS "ticket_masters_org_select" ON ticket_masters;
 CREATE POLICY "ticket_masters_org_select" ON ticket_masters FOR SELECT
 USING (
@@ -992,6 +1052,7 @@ USING (
 );
 
 DROP POLICY IF EXISTS "ticket_masters_org_insert" ON ticket_masters;
+DROP POLICY IF EXISTS "ticket_masters_org_insert" ON ticket_masters;
 CREATE POLICY "ticket_masters_org_insert" ON ticket_masters FOR INSERT
 WITH CHECK (
     EXISTS (
@@ -1008,6 +1069,7 @@ WITH CHECK (
 );
 
 DROP POLICY IF EXISTS "ticket_masters_org_update" ON ticket_masters;
+DROP POLICY IF EXISTS "ticket_masters_org_update" ON ticket_masters;
 CREATE POLICY "ticket_masters_org_update" ON ticket_masters FOR UPDATE
 USING (
     EXISTS (
@@ -1023,6 +1085,7 @@ USING (
     )
 );
 
+DROP POLICY IF EXISTS "ticket_masters_org_delete" ON ticket_masters;
 DROP POLICY IF EXISTS "ticket_masters_org_delete" ON ticket_masters;
 CREATE POLICY "ticket_masters_org_delete" ON ticket_masters FOR DELETE
 USING (
@@ -1044,6 +1107,7 @@ USING (
 -- ============================================================================
 
 DROP POLICY IF EXISTS "cust_tickets_org_select" ON customer_tickets;
+DROP POLICY IF EXISTS "cust_tickets_org_select" ON customer_tickets;
 CREATE POLICY "cust_tickets_org_select" ON customer_tickets FOR SELECT
 USING (
     EXISTS (
@@ -1063,6 +1127,7 @@ USING (
 
 -- Logged-in customers can see their own tickets
 DROP POLICY IF EXISTS "cust_tickets_self_select" ON customer_tickets;
+DROP POLICY IF EXISTS "cust_tickets_self_select" ON customer_tickets;
 CREATE POLICY "cust_tickets_self_select" ON customer_tickets FOR SELECT
 USING (
     EXISTS (
@@ -1072,6 +1137,7 @@ USING (
     )
 );
 
+DROP POLICY IF EXISTS "cust_tickets_org_insert" ON customer_tickets;
 DROP POLICY IF EXISTS "cust_tickets_org_insert" ON customer_tickets;
 CREATE POLICY "cust_tickets_org_insert" ON customer_tickets FOR INSERT
 WITH CHECK (
@@ -1091,6 +1157,7 @@ WITH CHECK (
 );
 
 DROP POLICY IF EXISTS "cust_tickets_org_update" ON customer_tickets;
+DROP POLICY IF EXISTS "cust_tickets_org_update" ON customer_tickets;
 CREATE POLICY "cust_tickets_org_update" ON customer_tickets FOR UPDATE
 USING (
     EXISTS (
@@ -1108,6 +1175,7 @@ USING (
     )
 );
 
+DROP POLICY IF EXISTS "cust_tickets_org_delete" ON customer_tickets;
 DROP POLICY IF EXISTS "cust_tickets_org_delete" ON customer_tickets;
 CREATE POLICY "cust_tickets_org_delete" ON customer_tickets FOR DELETE
 USING (

@@ -49,6 +49,8 @@ export default async function TweetsPage(props: Props) {
         console.error('Failed to fetch stores for tweets:', error);
     }
 
+    const currentStore = storeId ? stores.find(s => s.id === storeId) : null;
+
     return (
         <div className="space-y-4">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -58,8 +60,13 @@ export default async function TweetsPage(props: Props) {
                 </div>
             </div>
 
-            {storeId ? (
-                <TweetsClient initialSchedules={schedules} storeId={storeId} staffList={staffList} />
+            {storeId && currentStore ? (
+                <TweetsClient 
+                    initialSchedules={schedules} 
+                    storeId={storeId} 
+                    staffList={staffList} 
+                    blueskyHandle={currentStore.bluesky_handle} 
+                />
             ) : (
                 <div className="text-center py-10 text-muted-foreground">
                     店舗が見つかりません。先に店舗を作成してください。

@@ -31,6 +31,8 @@ export type StoreData = {
     organization_id?: string // New field for SaaS multi-tenancy
     business_days?: BusinessDayConfig[]
     cross_store_buffers?: Record<string, number>
+    bluesky_handle?: string
+    bluesky_app_password?: string
 }
 
 export type BusinessDayConfig = {

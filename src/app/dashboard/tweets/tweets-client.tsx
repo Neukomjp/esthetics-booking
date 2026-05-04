@@ -14,11 +14,13 @@ import { toast } from 'sonner'
 import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Staff } from '@/types/staff'
+import { updateBlueskyCredentialsAction } from '@/lib/actions/store'
 
 interface TweetsClientProps {
     initialSchedules: TweetSchedule[]
     storeId: string
     staffList: Staff[]
+    blueskyHandle?: string | null
 }
 
 const statusLabels: Record<string, { label: string; className: string }> = {
@@ -27,14 +29,20 @@ const statusLabels: Record<string, { label: string; className: string }> = {
     failed: { label: '失敗', className: 'bg-red-100 text-red-800 border-red-200' },
 }
 
-export function TweetsClient({ initialSchedules, storeId, staffList }: TweetsClientProps) {
+export function TweetsClient({ initialSchedules, storeId, staffList, blueskyHandle }: TweetsClientProps) {
     const [schedules, setSchedules] = useState<TweetSchedule[]>(initialSchedules)
     const [isDialogOpen, setIsDialogOpen] = useState(false)
+    const [isLinkDialogOpen, setIsLinkDialogOpen] = useState(false)
     const [scheduleToDelete, setScheduleToDelete] = useState<TweetSchedule | null>(null)
     const [isLoading, setIsLoading] = useState(false)
+    const [isLinking, setIsLinking] = useState(false)
 
-    // Account link state (mock)
-    const [isLinked, setIsLinked] = useState(false)
+    // Account link state
+    const [isLinked, setIsLinked] = useState(!!blueskyHandle)
+    const [credentials, setCredentials] = useState({
+        handle: blueskyHandle || '',
+        password: ''
+    })
 
     const [formData, setFormData] = useState({
         staff_id: 'all',
@@ -103,13 +111,43 @@ export function TweetsClient({ initialSchedules, storeId, staffList }: TweetsCli
         }
     }
 
-    const toggleLink = () => {
-        if (isLinked) {
-            setIsLinked(false)
-            toast.success('Blueskyアカウントの連携を解除しました')
-        } else {
+    const handleLinkClick = () => {
+        setIsLinkDialogOpen(true)
+    }
+
+    const handleSaveCredentials = async () => {
+        if (!credentials.handle || !credentials.password) {
+            toast.error('ハンドル名とアプリパスワードを入力してください')
+            return
+        }
+
+        setIsLinking(true)
+        try {
+            await updateBlueskyCredentialsAction(storeId, credentials.handle, credentials.password)
             setIsLinked(true)
-            toast.success('Blueskyアカウントと連携しました（※デモ動作）')
+            toast.success('Blueskyアカウントを連携しました')
+            setIsLinkDialogOpen(false)
+        } catch (error) {
+            console.error('Failed to link account:', error)
+            toast.error('連携に失敗しました。時間をおいて再試行してください。')
+        } finally {
+            setIsLinking(false)
+        }
+    }
+
+    const handleUnlink = async () => {
+        setIsLinking(true)
+        try {
+            await updateBlueskyCredentialsAction(storeId, null, null)
+            setIsLinked(false)
+            setCredentials({ handle: '', password: '' })
+            toast.success('Blueskyアカウントの連携を解除しました')
+            setIsLinkDialogOpen(false)
+        } catch (error) {
+            console.error('Failed to unlink account:', error)
+            toast.error('解除に失敗しました。')
+        } finally {
+            setIsLinking(false)
         }
     }
 
@@ -117,12 +155,12 @@ export function TweetsClient({ initialSchedules, storeId, staffList }: TweetsCli
         <div className="space-y-4">
             <div className="flex justify-end">
                 <Button 
-                    onClick={toggleLink}
+                    onClick={handleLinkClick}
                     variant={isLinked ? "outline" : "default"}
-                    className={`h-8 px-4 text-[13px] font-bold ${!isLinked ? 'bg-[#0085ff] hover:bg-[#0074e0] text-white border-none' : 'text-gray-700'}`}
+                    className={`h-8 px-4 text-[13px] font-bold ${!isLinked ? 'bg-[#0085ff] hover:bg-[#0074e0] text-white border-none' : 'text-blue-600 border-blue-200 hover:bg-blue-50'}`}
                 >
                     <Send className="mr-2 h-4 w-4" /> 
-                    {isLinked ? 'アカウント連携解除' : 'アカウント連携'}
+                    {isLinked ? '連携済み (設定変更)' : 'アカウント連携'}
                 </Button>
             </div>
 
@@ -247,6 +285,64 @@ export function TweetsClient({ initialSchedules, storeId, staffList }: TweetsCli
                         <Button onClick={handleSave} disabled={isLoading} className="text-[13px] bg-[#4CAF50] hover:bg-[#45a049] text-white">
                             {isLoading ? '保存中...' : 'スケジュールする'}
                         </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
+            {/* Account Link Dialog */}
+            <Dialog open={isLinkDialogOpen} onOpenChange={setIsLinkDialogOpen}>
+                <DialogContent className="sm:max-w-[425px]">
+                    <DialogHeader>
+                        <DialogTitle>Blueskyアカウント連携</DialogTitle>
+                        <DialogDescription>
+                            自動投稿を行うためのBlueskyアカウント情報を設定します。セキュリティのため、通常のパスワードではなく「アプリパスワード（App Password）」をご利用ください。
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="space-y-4 py-4">
+                        <div className="space-y-2">
+                            <Label className="text-[13px]">ハンドル名</Label>
+                            <Input 
+                                placeholder="例: shop.bsky.social" 
+                                value={credentials.handle}
+                                onChange={(e) => setCredentials({...credentials, handle: e.target.value})}
+                                className="text-[13px]"
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <Label className="text-[13px]">アプリパスワード</Label>
+                            <Input 
+                                type="password" 
+                                placeholder="xxxx-xxxx-xxxx-xxxx" 
+                                value={credentials.password}
+                                onChange={(e) => setCredentials({...credentials, password: e.target.value})}
+                                className="text-[13px]"
+                            />
+                            <div className="text-[11px] text-gray-500">
+                                Blueskyの「設定」＞「高度な設定」＞「アプリパスワード」から生成できます。
+                            </div>
+                        </div>
+                    </div>
+                    <DialogFooter className="flex justify-between items-center w-full sm:justify-between">
+                        {isLinked ? (
+                            <Button 
+                                variant="destructive" 
+                                onClick={handleUnlink} 
+                                disabled={isLinking} 
+                                className="text-[13px]"
+                            >
+                                {isLinking ? '処理中...' : '連携を解除'}
+                            </Button>
+                        ) : (
+                            <div /> // Placeholder for spacing
+                        )}
+                        <div className="flex gap-2">
+                            <Button variant="outline" onClick={() => setIsLinkDialogOpen(false)} disabled={isLinking} className="text-[13px]">
+                                キャンセル
+                            </Button>
+                            <Button onClick={handleSaveCredentials} disabled={isLinking} className="text-[13px] bg-[#0085ff] hover:bg-[#0074e0] text-white">
+                                {isLinking ? '保存中...' : '連携する'}
+                            </Button>
+                        </div>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>

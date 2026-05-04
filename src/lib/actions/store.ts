@@ -64,3 +64,27 @@ export async function getStoreByIdAction(id: string) {
     const { supabase } = await requireAuth()
     return await storeService.getStoreById(id, undefined, supabase)
 }
+
+export async function updateBlueskyCredentialsAction(storeId: string, handle: string | null, appPassword: string | null) {
+    const { supabase } = await requireAuth()
+    try {
+        const result = await storeService.updateStore(storeId, {
+            bluesky_handle: handle || undefined,
+            bluesky_app_password: appPassword || undefined
+        }, supabase)
+        
+        // If handle is null, we are clearing the credentials (we need to explicitly set to null in DB, but updateStore ignores undefined. Let's fix that)
+        if (handle === null || appPassword === null) {
+            await supabase.from('stores').update({
+                bluesky_handle: null,
+                bluesky_app_password: null
+            }).eq('id', storeId)
+        }
+        
+        revalidatePath('/dashboard/tweets')
+        return { success: true }
+    } catch (err: any) {
+        console.error("updateBlueskyCredentialsAction error:", err.message || err)
+        throw err
+    }
+}

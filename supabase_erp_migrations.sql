@@ -206,3 +206,16 @@ CREATE POLICY "Enable all access for org members" ON public.tweet_schedules
     FOR ALL USING (
         store_id IN (SELECT s.id FROM public.stores s JOIN public.organization_members om ON s.organization_id = om.organization_id WHERE om.user_id = auth.uid())
     );
+ 
+ - -   A d d   B l u e s k y   i n t e g r a t i o n   c o l u m n s   t o   t h e   s t o r e s   t a b l e  
+ D O   $ $  
+ B E G I N  
+         I F   N O T   E X I S T S   ( S E L E C T   1   F R O M   i n f o r m a t i o n _ s c h e m a . c o l u m n s   W H E R E   t a b l e _ n a m e = ' s t o r e s '   A N D   c o l u m n _ n a m e = ' b l u e s k y _ h a n d l e ' )   T H E N  
+                 A L T E R   T A B L E   p u b l i c . s t o r e s   A D D   C O L U M N   b l u e s k y _ h a n d l e   T E X T ;  
+         E N D   I F ;  
+          
+         I F   N O T   E X I S T S   ( S E L E C T   1   F R O M   i n f o r m a t i o n _ s c h e m a . c o l u m n s   W H E R E   t a b l e _ n a m e = ' s t o r e s '   A N D   c o l u m n _ n a m e = ' b l u e s k y _ a p p _ p a s s w o r d ' )   T H E N  
+                 A L T E R   T A B L E   p u b l i c . s t o r e s   A D D   C O L U M N   b l u e s k y _ a p p _ p a s s w o r d   T E X T ;  
+         E N D   I F ;  
+ E N D   $ $ ;  
+ 
