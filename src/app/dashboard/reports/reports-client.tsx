@@ -6,7 +6,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line, ComposedChart } from 'recharts'
 import { Button } from '@/components/ui/button'
-import { BarChart3, LineChart as LineChartIcon } from 'lucide-react'
+import { BarChart3, LineChart as LineChartIcon, TrendingUp, TrendingDown, DollarSign, Users } from 'lucide-react'
 
 interface ReportsClientProps {
     dailySalesData: any[]
@@ -23,11 +23,68 @@ export function ReportsClient({ dailySalesData, weeklySalesData, monthlySalesDat
         return new Intl.NumberFormat('ja-JP', { notation: "compact", compactDisplay: "short" }).format(tickItem);
     }
 
-    const renderSalesData = (fillColor: string) => {
-        if (chartType === 'bar') {
-            return <Bar yAxisId="left" dataKey="sales" name="売上" fill={fillColor} radius={[4, 4, 0, 0]} />
+    const renderDataSeries = (type: 'sales' | 'expenses' | 'payouts' | 'profit', name: string, color: string, isLineOnly = false) => {
+        if (isLineOnly || chartType === 'line') {
+            return <Line yAxisId="left" type="monotone" dataKey={type} name={name} stroke={color} strokeWidth={isLineOnly ? 3 : 2} dot={!isLineOnly} />
         }
-        return <Line yAxisId="left" type="monotone" dataKey="sales" name="売上" stroke={fillColor} strokeWidth={3} />
+        return <Bar yAxisId="left" dataKey={type} name={name} fill={color} radius={[4, 4, 0, 0]} />
+    }
+
+    const customTooltip = (value: number, name: string) => {
+        if (name === '予約件数') return `${value}件`
+        return `¥${value.toLocaleString()}`
+    }
+
+    const renderSummaryCards = (data: any[], dateKey: string) => {
+        const totals = data.reduce((acc, curr) => ({
+            sales: acc.sales + (curr.sales || 0),
+            profit: acc.profit + (curr.profit || 0),
+            payouts: acc.payouts + (curr.payouts || 0),
+            expenses: acc.expenses + (curr.expenses || 0),
+        }), { sales: 0, profit: 0, payouts: 0, expenses: 0 })
+
+        return (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                <Card>
+                    <CardContent className="p-4 flex items-center justify-between">
+                        <div>
+                            <p className="text-sm font-medium text-gray-500">期間売上</p>
+                            <h3 className="text-xl font-bold text-gray-900">¥{totals.sales.toLocaleString()}</h3>
+                        </div>
+                        <div className="p-2 bg-blue-100 rounded-full"><DollarSign className="w-4 h-4 text-blue-600" /></div>
+                    </CardContent>
+                </Card>
+                <Card>
+                    <CardContent className="p-4 flex items-center justify-between">
+                        <div>
+                            <p className="text-sm font-medium text-gray-500">粗利</p>
+                            <h3 className={`text-xl font-bold ${totals.profit >= 0 ? 'text-green-600' : 'text-red-600'}`}>¥{totals.profit.toLocaleString()}</h3>
+                        </div>
+                        <div className={`p-2 rounded-full ${totals.profit >= 0 ? 'bg-green-100' : 'bg-red-100'}`}>
+                            {totals.profit >= 0 ? <TrendingUp className="w-4 h-4 text-green-600" /> : <TrendingDown className="w-4 h-4 text-red-600" />}
+                        </div>
+                    </CardContent>
+                </Card>
+                <Card>
+                    <CardContent className="p-4 flex items-center justify-between">
+                        <div>
+                            <p className="text-sm font-medium text-gray-500">給与支払</p>
+                            <h3 className="text-xl font-bold text-gray-900">¥{totals.payouts.toLocaleString()}</h3>
+                        </div>
+                        <div className="p-2 bg-orange-100 rounded-full"><Users className="w-4 h-4 text-orange-600" /></div>
+                    </CardContent>
+                </Card>
+                <Card>
+                    <CardContent className="p-4 flex items-center justify-between">
+                        <div>
+                            <p className="text-sm font-medium text-gray-500">経費</p>
+                            <h3 className="text-xl font-bold text-gray-900">¥{totals.expenses.toLocaleString()}</h3>
+                        </div>
+                        <div className="p-2 bg-red-100 rounded-full"><DollarSign className="w-4 h-4 text-red-600" /></div>
+                    </CardContent>
+                </Card>
+            </div>
+        )
     }
 
     return (
@@ -114,10 +171,11 @@ export function ReportsClient({ dailySalesData, weeklySalesData, monthlySalesDat
 
             {/* DAILY REPORT */}
             <TabsContent value="daily">
+                {renderSummaryCards(dailySalesData, 'date')}
                 <Card>
                     <CardHeader>
                         <CardTitle>日別推移 (直近30日)</CardTitle>
-                        <CardDescription>日々の売上と予約件数の推移</CardDescription>
+                        <CardDescription>日々の売上・粗利・予約件数の推移</CardDescription>
                     </CardHeader>
                     <CardContent className="h-[400px]">
                         <ResponsiveContainer width="100%" height="100%">
@@ -126,10 +184,13 @@ export function ReportsClient({ dailySalesData, weeklySalesData, monthlySalesDat
                                 <XAxis dataKey="date" tickFormatter={(val) => val.split('-').slice(1).join('/')} />
                                 <YAxis yAxisId="left" tickFormatter={formatYAxis} />
                                 <YAxis yAxisId="right" orientation="right" />
-                                <Tooltip formatter={(value: number, name: string) => name === '売上' ? `¥${value.toLocaleString()}` : `${value}件`} />
+                                <Tooltip formatter={customTooltip} />
                                 <Legend />
-                                {renderSalesData("#3b82f6")}
-                                <Line yAxisId="right" type="monotone" dataKey="bookings" name="予約件数" stroke="#f59e0b" strokeWidth={2} />
+                                {renderDataSeries('sales', '売上', '#3b82f6')}
+                                {renderDataSeries('payouts', '給与', '#f97316')}
+                                {renderDataSeries('expenses', '経費', '#ef4444')}
+                                {renderDataSeries('profit', '粗利', '#10b981', true)}
+                                <Line yAxisId="right" type="monotone" dataKey="bookings" name="予約件数" stroke="#6366f1" strokeWidth={2} strokeDasharray="5 5" />
                             </ComposedChart>
                         </ResponsiveContainer>
                     </CardContent>
@@ -138,10 +199,11 @@ export function ReportsClient({ dailySalesData, weeklySalesData, monthlySalesDat
 
             {/* WEEKLY REPORT */}
             <TabsContent value="weekly">
+                {renderSummaryCards(weeklySalesData, 'week')}
                 <Card>
                     <CardHeader>
                         <CardTitle>週別推移 (直近12週)</CardTitle>
-                        <CardDescription>週ごとの売上トレンド (月曜日始まり)</CardDescription>
+                        <CardDescription>週ごとの売上・粗利トレンド (月曜日始まり)</CardDescription>
                     </CardHeader>
                     <CardContent className="h-[400px]">
                         <ResponsiveContainer width="100%" height="100%">
@@ -150,10 +212,13 @@ export function ReportsClient({ dailySalesData, weeklySalesData, monthlySalesDat
                                 <XAxis dataKey="week" tickFormatter={(val) => val.split('-').slice(1).join('/')} />
                                 <YAxis yAxisId="left" tickFormatter={formatYAxis} />
                                 <YAxis yAxisId="right" orientation="right" />
-                                <Tooltip formatter={(value: number, name: string) => name === '売上' ? `¥${value.toLocaleString()}` : `${value}件`} />
+                                <Tooltip formatter={customTooltip} />
                                 <Legend />
-                                {renderSalesData("#8b5cf6")}
-                                <Line yAxisId="right" type="monotone" dataKey="bookings" name="予約件数" stroke="#ec4899" strokeWidth={2} />
+                                {renderDataSeries('sales', '売上', '#3b82f6')}
+                                {renderDataSeries('payouts', '給与', '#f97316')}
+                                {renderDataSeries('expenses', '経費', '#ef4444')}
+                                {renderDataSeries('profit', '粗利', '#10b981', true)}
+                                <Line yAxisId="right" type="monotone" dataKey="bookings" name="予約件数" stroke="#6366f1" strokeWidth={2} strokeDasharray="5 5" />
                             </ComposedChart>
                         </ResponsiveContainer>
                     </CardContent>
@@ -162,10 +227,11 @@ export function ReportsClient({ dailySalesData, weeklySalesData, monthlySalesDat
 
             {/* MONTHLY REPORT */}
             <TabsContent value="monthly">
+                {renderSummaryCards(monthlySalesData, 'month')}
                 <Card>
                     <CardHeader>
                         <CardTitle>月別推移 (直近6ヶ月)</CardTitle>
-                        <CardDescription>月ごとの売上と予約件数の推移</CardDescription>
+                        <CardDescription>月ごとの売上・粗利・予約件数の推移</CardDescription>
                     </CardHeader>
                     <CardContent className="h-[400px]">
                         <ResponsiveContainer width="100%" height="100%">
@@ -174,10 +240,13 @@ export function ReportsClient({ dailySalesData, weeklySalesData, monthlySalesDat
                                 <XAxis dataKey="month" />
                                 <YAxis yAxisId="left" tickFormatter={formatYAxis} />
                                 <YAxis yAxisId="right" orientation="right" />
-                                <Tooltip formatter={(value: number, name: string) => name === '売上' ? `¥${value.toLocaleString()}` : `${value}件`} />
+                                <Tooltip formatter={customTooltip} />
                                 <Legend />
-                                {renderSalesData("#10b981")}
-                                <Line yAxisId="right" type="monotone" dataKey="bookings" name="予約件数" stroke="#f97316" strokeWidth={2} />
+                                {renderDataSeries('sales', '売上', '#3b82f6')}
+                                {renderDataSeries('payouts', '給与', '#f97316')}
+                                {renderDataSeries('expenses', '経費', '#ef4444')}
+                                {renderDataSeries('profit', '粗利', '#10b981', true)}
+                                <Line yAxisId="right" type="monotone" dataKey="bookings" name="予約件数" stroke="#6366f1" strokeWidth={2} strokeDasharray="5 5" />
                             </ComposedChart>
                         </ResponsiveContainer>
                     </CardContent>

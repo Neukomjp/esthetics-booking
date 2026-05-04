@@ -11,6 +11,9 @@ export type MonthlySales = {
     month: string // YYYY-MM
     sales: number
     bookings: number
+    expenses: number
+    payouts: number
+    profit: number
 }
 
 export const salesService = {
@@ -61,21 +64,16 @@ export const salesService = {
     },
 
     async getMonthlySales(storeId: string): Promise<MonthlySales[]> {
-        // In a real app, uses database aggregation or RPC
-        // For now, fetch last 6 months raw and aggregate in JS
         const supabase = createClient()
         const now = new Date()
         const sixMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 5, 1).toISOString()
+        const sixMonthsAgoDateOnly = new Date(now.getFullYear(), now.getMonth() - 5, 1).toISOString().split('T')[0]
 
-        const { data, error } = await supabase
-            .from('bookings')
-            .select('start_time, total_price')
-            .eq('store_id', storeId)
-            .gte('start_time', sixMonthsAgo)
-            .neq('status', 'cancelled')
-            .order('start_time', { ascending: true })
-
-        if (error) throw new Error(error.message)
+        const [bookingsRes, expensesRes, payoutsRes] = await Promise.all([
+            supabase.from('bookings').select('start_time, total_price').eq('store_id', storeId).gte('start_time', sixMonthsAgo).neq('status', 'cancelled').order('start_time', { ascending: true }),
+            supabase.from('expenses').select('expense_date, amount').eq('store_id', storeId).gte('expense_date', sixMonthsAgoDateOnly),
+            supabase.from('daily_payouts').select('payout_date, total_amount').eq('store_id', storeId).gte('payout_date', sixMonthsAgoDateOnly)
+        ])
 
         const aggregation: Record<string, MonthlySales> = {}
 
@@ -83,10 +81,10 @@ export const salesService = {
         for (let i = 5; i >= 0; i--) {
             const d = new Date(now.getFullYear(), now.getMonth() - i, 1)
             const key = `${d.getFullYear()}-${(d.getMonth() + 1).toString().padStart(2, '0')}`
-            aggregation[key] = { month: key, sales: 0, bookings: 0 }
+            aggregation[key] = { month: key, sales: 0, bookings: 0, expenses: 0, payouts: 0, profit: 0 }
         }
 
-        data?.forEach((b) => {
+        bookingsRes.data?.forEach((b) => {
             const date = new Date(b.start_time)
             const key = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}`
             if (aggregation[key]) {
@@ -95,34 +93,44 @@ export const salesService = {
             }
         })
 
-        return Object.values(aggregation)
+        expensesRes.data?.forEach((e) => {
+            const key = e.expense_date.substring(0, 7) // YYYY-MM
+            if (aggregation[key]) aggregation[key].expenses += (e.amount || 0)
+        })
+
+        payoutsRes.data?.forEach((p) => {
+            const key = p.payout_date.substring(0, 7)
+            if (aggregation[key]) aggregation[key].payouts += (p.total_amount || 0)
+        })
+
+        return Object.values(aggregation).map(a => ({
+            ...a,
+            profit: a.sales - a.expenses - a.payouts
+        }))
     },
 
-    async getDailySales(storeId: string, days: number = 30): Promise<{ date: string; sales: number; bookings: number }[]> {
+    async getDailySales(storeId: string, days: number = 30): Promise<{ date: string; sales: number; bookings: number; expenses: number; payouts: number; profit: number }[]> {
         const supabase = createClient()
         const now = new Date()
         const startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() - days + 1).toISOString()
+        const startDateOnly = startDate.split('T')[0]
 
-        const { data, error } = await supabase
-            .from('bookings')
-            .select('start_time, total_price')
-            .eq('store_id', storeId)
-            .gte('start_time', startDate)
-            .neq('status', 'cancelled')
-            .order('start_time', { ascending: true })
+        const [bookingsRes, expensesRes, payoutsRes] = await Promise.all([
+            supabase.from('bookings').select('start_time, total_price').eq('store_id', storeId).gte('start_time', startDate).neq('status', 'cancelled').order('start_time', { ascending: true }),
+            supabase.from('expenses').select('expense_date, amount').eq('store_id', storeId).gte('expense_date', startDateOnly),
+            supabase.from('daily_payouts').select('payout_date, total_amount').eq('store_id', storeId).gte('payout_date', startDateOnly)
+        ])
 
-        if (error) throw new Error(error.message)
-
-        const aggregation: Record<string, { date: string; sales: number; bookings: number }> = {}
+        const aggregation: Record<string, { date: string; sales: number; bookings: number; expenses: number; payouts: number; profit: number }> = {}
 
         // Initialize last N days
         for (let i = days - 1; i >= 0; i--) {
             const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i)
             const key = `${d.getFullYear()}-${(d.getMonth() + 1).toString().padStart(2, '0')}-${d.getDate().toString().padStart(2, '0')}`
-            aggregation[key] = { date: key, sales: 0, bookings: 0 }
+            aggregation[key] = { date: key, sales: 0, bookings: 0, expenses: 0, payouts: 0, profit: 0 }
         }
 
-        data?.forEach((b) => {
+        bookingsRes.data?.forEach((b) => {
             const d = new Date(b.start_time)
             const key = `${d.getFullYear()}-${(d.getMonth() + 1).toString().padStart(2, '0')}-${d.getDate().toString().padStart(2, '0')}`
             if (aggregation[key]) {
@@ -131,52 +139,73 @@ export const salesService = {
             }
         })
 
-        return Object.values(aggregation)
+        expensesRes.data?.forEach((e) => {
+            if (aggregation[e.expense_date]) aggregation[e.expense_date].expenses += (e.amount || 0)
+        })
+
+        payoutsRes.data?.forEach((p) => {
+            if (aggregation[p.payout_date]) aggregation[p.payout_date].payouts += (p.total_amount || 0)
+        })
+
+        return Object.values(aggregation).map(a => ({
+            ...a,
+            profit: a.sales - a.expenses - a.payouts
+        }))
     },
 
-    async getWeeklySales(storeId: string, weeks: number = 12): Promise<{ week: string; sales: number; bookings: number }[]> {
+    async getWeeklySales(storeId: string, weeks: number = 12): Promise<{ week: string; sales: number; bookings: number; expenses: number; payouts: number; profit: number }[]> {
         const supabase = createClient()
         const now = new Date()
         const startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() - (weeks * 7) + 1).toISOString()
+        const startDateOnly = startDate.split('T')[0]
 
-        const { data, error } = await supabase
-            .from('bookings')
-            .select('start_time, total_price')
-            .eq('store_id', storeId)
-            .gte('start_time', startDate)
-            .neq('status', 'cancelled')
-            .order('start_time', { ascending: true })
+        const [bookingsRes, expensesRes, payoutsRes] = await Promise.all([
+            supabase.from('bookings').select('start_time, total_price').eq('store_id', storeId).gte('start_time', startDate).neq('status', 'cancelled').order('start_time', { ascending: true }),
+            supabase.from('expenses').select('expense_date, amount').eq('store_id', storeId).gte('expense_date', startDateOnly),
+            supabase.from('daily_payouts').select('payout_date, total_amount').eq('store_id', storeId).gte('payout_date', startDateOnly)
+        ])
 
-        if (error) throw new Error(error.message)
-
-        const aggregation: Record<string, { week: string; sales: number; bookings: number }> = {}
+        const aggregation: Record<string, { week: string; sales: number; bookings: number; expenses: number; payouts: number; profit: number }> = {}
 
         // Helper to get Monday of a week
-        const getMonday = (d: Date) => {
-            d = new Date(d)
-            const day = d.getDay()
-            const diff = d.getDate() - day + (day === 0 ? -6 : 1)
-            return new Date(d.setDate(diff))
+        const getMonday = (d: Date | string) => {
+            const date = new Date(d)
+            const day = date.getDay()
+            const diff = date.getDate() - day + (day === 0 ? -6 : 1)
+            return new Date(date.setDate(diff))
         }
+
+        const formatKey = (d: Date) => `${d.getFullYear()}-${(d.getMonth() + 1).toString().padStart(2, '0')}-${d.getDate().toString().padStart(2, '0')}`
 
         // Initialize last N weeks
         for (let i = weeks - 1; i >= 0; i--) {
             const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() - (i * 7))
             const monday = getMonday(d)
-            const key = `${monday.getFullYear()}-${(monday.getMonth() + 1).toString().padStart(2, '0')}-${monday.getDate().toString().padStart(2, '0')}`
-            aggregation[key] = { week: key, sales: 0, bookings: 0 }
+            const key = formatKey(monday)
+            aggregation[key] = { week: key, sales: 0, bookings: 0, expenses: 0, payouts: 0, profit: 0 }
         }
 
-        data?.forEach((b) => {
-            const d = new Date(b.start_time)
-            const monday = getMonday(d)
-            const key = `${monday.getFullYear()}-${(monday.getMonth() + 1).toString().padStart(2, '0')}-${monday.getDate().toString().padStart(2, '0')}`
+        bookingsRes.data?.forEach((b) => {
+            const key = formatKey(getMonday(b.start_time))
             if (aggregation[key]) {
                 aggregation[key].sales += (b.total_price || 0)
                 aggregation[key].bookings += 1
             }
         })
 
-        return Object.values(aggregation)
+        expensesRes.data?.forEach((e) => {
+            const key = formatKey(getMonday(e.expense_date))
+            if (aggregation[key]) aggregation[key].expenses += (e.amount || 0)
+        })
+
+        payoutsRes.data?.forEach((p) => {
+            const key = formatKey(getMonday(p.payout_date))
+            if (aggregation[key]) aggregation[key].payouts += (p.total_amount || 0)
+        })
+
+        return Object.values(aggregation).map(a => ({
+            ...a,
+            profit: a.sales - a.expenses - a.payouts
+        }))
     }
 }
