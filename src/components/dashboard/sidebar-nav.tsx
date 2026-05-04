@@ -26,7 +26,6 @@ export function SidebarNav({ role }: SidebarNavProps) {
     const navItems = [
         { href: '/dashboard', label: 'ホーム', icon: LayoutDashboard, show: true },
         { href: '/dashboard/reports', label: 'レポート分析', icon: LayoutDashboard, show: true },
-        { href: '/dashboard/schedules', label: 'スケジュール', icon: Clock, show: true },
         { href: '/dashboard/shifts', label: 'シフト', icon: Briefcase, show: true },
         { href: '/dashboard/bookings', label: '予約', icon: Calendar, show: true },
         { href: '/dashboard/customers', label: '顧客', icon: Users, show: canViewCustomers(role as any) },
