@@ -123,8 +123,23 @@ export async function GET() {
                     customer_name: '小林 健太', total_price: 10000, status: 'cancelled',
                     start_time: new Date(addDays(0).setHours(18, 0, 0, 0)).toISOString(),
                     end_time: new Date(addDays(0).setHours(20, 0, 0, 0)).toISOString()
+                },
+                { 
+                    store_id: storeId, staff_id: staffIds[2], service_id: services[1].id, customer_id: customers[2].id,
+                    customer_name: '伊藤 次郎 (本日分)', total_price: 12000, status: 'completed',
+                    start_time: new Date(addDays(0).setHours(12, 0, 0, 0)).toISOString(),
+                    end_time: new Date(addDays(0).setHours(13, 30, 0, 0)).toISOString()
                 }
             ])
+        }
+
+        // 6.5 Seed Salary Settings (so guarantee calculation works)
+        for (let i = 0; i < staffIds.length; i++) {
+            await supabase.from('staff_salary_settings').upsert({
+                staff_id: staffIds[i],
+                hourly_wage: 1500,
+                guarantee_daily: i === 0 ? 10000 : 0 // 1st staff gets 10000 guarantee
+            }, { onConflict: 'staff_id' })
         }
 
         // 7. Seed Message Scripts
