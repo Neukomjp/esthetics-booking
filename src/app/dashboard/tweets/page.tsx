@@ -53,7 +53,7 @@ export default async function TweetsPage(props: Props) {
         <div className="space-y-4">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div className="flex items-center gap-6">
-                    <h2 className="text-3xl font-bold tracking-tight">自動ツイート管理</h2>
+                    <h2 className="text-3xl font-bold tracking-tight">Bluesky自動投稿管理</h2>
                     <StoreSelector stores={stores} currentStoreId={storeId} />
                 </div>
             </div>

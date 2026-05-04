@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Plus, Twitter } from 'lucide-react'
+import { Plus, Send } from 'lucide-react'
 import { tweetService, TweetSchedule } from '@/lib/services/marketing'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '@/components/ui/dialog'
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog'
@@ -106,10 +106,10 @@ export function TweetsClient({ initialSchedules, storeId, staffList }: TweetsCli
     const toggleLink = () => {
         if (isLinked) {
             setIsLinked(false)
-            toast.success('Xアカウントの連携を解除しました')
+            toast.success('Blueskyアカウントの連携を解除しました')
         } else {
             setIsLinked(true)
-            toast.success('Xアカウントと連携しました（※デモ動作）')
+            toast.success('Blueskyアカウントと連携しました（※デモ動作）')
         }
     }
 
@@ -119,9 +119,9 @@ export function TweetsClient({ initialSchedules, storeId, staffList }: TweetsCli
                 <Button 
                     onClick={toggleLink}
                     variant={isLinked ? "outline" : "default"}
-                    className={`h-8 px-4 text-[13px] font-bold ${!isLinked ? 'bg-[#1DA1F2] hover:bg-[#1a91da] text-white border-none' : 'text-gray-700'}`}
+                    className={`h-8 px-4 text-[13px] font-bold ${!isLinked ? 'bg-[#0085ff] hover:bg-[#0074e0] text-white border-none' : 'text-gray-700'}`}
                 >
-                    <Twitter className="mr-1 h-4 w-4" /> 
+                    <Send className="mr-2 h-4 w-4" /> 
                     {isLinked ? 'アカウント連携解除' : 'アカウント連携'}
                 </Button>
             </div>
@@ -147,7 +147,7 @@ export function TweetsClient({ initialSchedules, storeId, staffList }: TweetsCli
                         {schedules.length === 0 ? (
                             <TableRow>
                                 <TableCell colSpan={5} className="text-center text-gray-500 py-8 text-[13px]">
-                                    スケジュールされたツイートはありません。
+                                    スケジュールされた投稿はありません。
                                 </TableCell>
                             </TableRow>
                         ) : (
@@ -190,7 +190,7 @@ export function TweetsClient({ initialSchedules, storeId, staffList }: TweetsCli
                 <DialogContent className="sm:max-w-[500px]">
                     <DialogHeader>
                         <DialogTitle>新規スケジュール作成</DialogTitle>
-                        <DialogDescription>自動投稿するツイートの内容と日時を設定します。</DialogDescription>
+                        <DialogDescription>自動投稿する内容と日時を設定します。</DialogDescription>
                     </DialogHeader>
                     <div className="space-y-4 py-4">
                         <div className="space-y-2">
@@ -231,12 +231,12 @@ export function TweetsClient({ initialSchedules, storeId, staffList }: TweetsCli
                             <Label className="text-[13px]">投稿内容 <span className="text-red-500">*</span></Label>
                             <Textarea 
                                 className="w-full min-h-[120px] text-[13px]"
-                                placeholder="ツイート内容を入力..."
+                                placeholder="投稿内容を入力..."
                                 value={formData.content}
                                 onChange={(e) => setFormData({...formData, content: e.target.value})}
                             />
                             <div className="text-[11px] text-gray-500 text-right">
-                                ※残り文字数: {140 - formData.content.length}文字
+                                ※残り文字数: {300 - formData.content.length}文字
                             </div>
                         </div>
                     </div>
@@ -256,7 +256,7 @@ export function TweetsClient({ initialSchedules, storeId, staffList }: TweetsCli
                     <AlertDialogHeader>
                         <AlertDialogTitle>スケジュールの削除</AlertDialogTitle>
                         <AlertDialogDescription>
-                            このツイートスケジュールを削除しますか？送信前の場合は投稿されません。
+                            この投稿スケジュールを削除しますか？送信前の場合は投稿されません。
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>

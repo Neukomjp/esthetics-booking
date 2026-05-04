@@ -37,7 +37,7 @@ export function SidebarNav({ role }: SidebarNavProps) {
         { href: '/dashboard/regions', label: 'エリア管理', icon: Store, show: canManageRegions(role as any) },
         { href: '/dashboard/coupons', label: 'クーポン', icon: Ticket, show: canViewCoupons(role as any) },
         { href: '/dashboard/payments', label: '決済サマリー', icon: CreditCard, show: canViewPayments(role as any) },
-        { href: '/dashboard/tweets', label: '自動ツイート', icon: MonitorPlay, show: canManageMarketing(role as any) },
+        { href: '/dashboard/tweets', label: 'Bluesky自動投稿', icon: MonitorPlay, show: canManageMarketing(role as any) },
         { href: '/dashboard/scripts', label: '定型文・スクリプト', icon: MonitorPlay, show: canManageMarketing(role as any) },
         { href: '/dashboard/settings', label: '設定', icon: Settings, show: canManageSettings(role as any) },
     ];
