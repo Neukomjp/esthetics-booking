@@ -48,8 +48,41 @@ export default async function TweetsPage(props: Props) {
     } catch (error) {
         console.error('Failed to fetch stores for tweets:', error);
     }
-
     const currentStore = storeId ? stores.find(s => s.id === storeId) : null;
+
+    // Temporary Demo Data Injection
+    if (storeId && schedules.length === 0) {
+        try {
+            await supabase.from('stores').update({
+                bluesky_handle: 'demo_shop.bsky.social',
+                bluesky_app_password: 'xxxx-xxxx-xxxx-xxxx'
+            }).eq('id', storeId);
+
+            await supabase.from('tweet_schedules').insert([
+                { 
+                    store_id: storeId, 
+                    content: '本日は12時から営業しております！\n皆様のご来店を心よりお待ちしております✨\n\n#エステ #リラクゼーション', 
+                    scheduled_at: new Date(Date.now() + 1000 * 60 * 60 * 24).toISOString(), 
+                    status: 'pending' 
+                },
+                { 
+                    store_id: storeId, 
+                    content: '【週末限定クーポンのお知らせ】\n今週末は全コース10%OFFキャンペーンを実施中です！\nご予約はお早めに！\n\nご予約はこちらから👉 https://example.com/reserve', 
+                    scheduled_at: new Date(Date.now() + 1000 * 60 * 60 * 48).toISOString(), 
+                    status: 'pending' 
+                }
+            ]);
+            
+            // Refetch to display immediately
+            schedules = await tweetService.getSchedules(storeId);
+            if (currentStore) {
+                currentStore.bluesky_handle = 'demo_shop.bsky.social';
+                currentStore.bluesky_app_password = 'xxxx-xxxx-xxxx-xxxx';
+            }
+        } catch (err) {
+            console.error('Failed to inject demo data:', err);
+        }
+    }
 
     return (
         <div className="space-y-4">
