@@ -37,7 +37,7 @@ export default async function GuaranteesPage(props: Props) {
         stores = await storeService.getStores(organizationId, supabase);
         if (stores.length > 0) {
             storeId = urlStoreId && stores.find(s => s.id === urlStoreId) ? urlStoreId : stores[0].id;
-            payouts = await payoutService.getPayouts(storeId, targetDate)
+            payouts = await payoutService.getPayouts(storeId, targetDate, supabase)
         }
     } catch (error) {
         console.error('Failed to fetch guarantees:', error);
