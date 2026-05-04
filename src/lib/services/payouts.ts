@@ -47,6 +47,20 @@ export const payoutService = {
         return data as DailyPayout
     },
 
+    async updatePayout(id: string, updates: Partial<Omit<DailyPayout, 'id' | 'created_at' | 'updated_at' | 'staff'>>, customClient?: unknown) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const supabase = (customClient as any) || createClient()
+        const { data, error } = await supabase
+            .from('daily_payouts')
+            .update(updates)
+            .eq('id', id)
+            .select('*, staff:staff_id(name)')
+            .single()
+
+        if (error) throw new Error(error.message)
+        return data as DailyPayout
+    },
+
     async markAsPaid(id: string, customClient?: unknown) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const supabase = (customClient as any) || createClient()

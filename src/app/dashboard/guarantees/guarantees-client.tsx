@@ -9,6 +9,7 @@ import { DailyPayout } from '@/lib/services/payouts'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
 import { calculatePayoutsAction, markPayoutAsPaidAction } from '@/lib/actions/erp'
+import { EditPayoutDialog } from './edit-payout-dialog'
 
 interface GuaranteesClientProps {
     initialPayouts: DailyPayout[]
@@ -20,6 +21,7 @@ export function GuaranteesClient({ initialPayouts, storeId, targetDate }: Guaran
     const [payouts, setPayouts] = useState<DailyPayout[]>(initialPayouts)
     const [isCalculating, setIsCalculating] = useState(false)
     const [currentDate, setCurrentDate] = useState(targetDate)
+    const [editingPayout, setEditingPayout] = useState<DailyPayout | null>(null)
     const router = useRouter()
     
     useEffect(() => {
@@ -153,7 +155,7 @@ export function GuaranteesClient({ initialPayouts, storeId, targetDate }: Guaran
                                             variant="ghost" 
                                             size="sm" 
                                             className="h-6 text-[11px] text-blue-600"
-                                            onClick={() => toast.info('編集機能は開発中です')}
+                                            onClick={() => setEditingPayout(payout)}
                                         >
                                             編集
                                         </Button>
@@ -164,6 +166,19 @@ export function GuaranteesClient({ initialPayouts, storeId, targetDate }: Guaran
                     </TableBody>
                 </Table>
             </div>
+
+            <EditPayoutDialog 
+                payout={editingPayout}
+                isOpen={!!editingPayout}
+                onOpenChange={(open) => !open && setEditingPayout(null)}
+                onSuccess={() => {
+                    // Update the local state to reflect the changes
+                    // Ideally we should re-fetch from DB, but we can do a hard refresh or update the local object.
+                    // For simplicity, we can just let revalidatePath handle it, but wait, this is client side.
+                    // Let's trigger a full refresh to get the latest DB state:
+                    router.refresh()
+                }}
+            />
         </div>
     )
 }

@@ -110,6 +110,29 @@ export async function markPayoutAsPaidAction(id: string) {
     revalidatePath('/dashboard/guarantees')
 }
 
+export async function updatePayoutAction(id: string, updates: { base_amount?: number; back_amount?: number; deduction_amount?: number; deduction_reason?: string | null }) {
+    const { supabase } = await requireAuth()
+    
+    // Automatically recalculate total_amount if any amounts are changed
+    const currentPayoutQuery = await supabase.from('daily_payouts').select('*').eq('id', id).single()
+    if (currentPayoutQuery.error) throw new Error('Payout not found')
+    
+    const currentPayout = currentPayoutQuery.data
+    const newBase = updates.base_amount !== undefined ? updates.base_amount : currentPayout.base_amount
+    const newBack = updates.back_amount !== undefined ? updates.back_amount : currentPayout.back_amount
+    const newDeduction = updates.deduction_amount !== undefined ? updates.deduction_amount : currentPayout.deduction_amount
+    
+    const totalAmount = newBase + newBack - newDeduction
+    
+    const finalUpdates = {
+        ...updates,
+        total_amount: totalAmount
+    }
+    
+    await payoutService.updatePayout(id, finalUpdates, supabase)
+    revalidatePath('/dashboard/guarantees')
+}
+
 // ==================== Regions ====================
 
 export async function getRegionsAction(organizationId: string) {
