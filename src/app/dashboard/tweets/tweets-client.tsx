@@ -187,19 +187,19 @@ export function TweetsClient({ initialSchedules, storeId, staffList }: TweetsCli
             </div>
 
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                <DialogContent>
+                <DialogContent className="sm:max-w-[500px]">
                     <DialogHeader>
                         <DialogTitle>新規スケジュール作成</DialogTitle>
                         <DialogDescription>自動投稿するツイートの内容と日時を設定します。</DialogDescription>
                     </DialogHeader>
-                    <div className="grid gap-4 py-4">
-                        <div className="grid grid-cols-4 items-center gap-4">
-                            <Label className="text-right text-[13px]">対象キャスト</Label>
+                    <div className="space-y-4 py-4">
+                        <div className="space-y-2">
+                            <Label className="text-[13px]">対象キャスト</Label>
                             <Select 
                                 value={formData.staff_id} 
                                 onValueChange={(val) => setFormData({...formData, staff_id: val})}
                             >
-                                <SelectTrigger className="col-span-3 text-[13px]">
+                                <SelectTrigger className="w-full text-[13px]">
                                     <SelectValue placeholder="選択してください" />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -210,34 +210,34 @@ export function TweetsClient({ initialSchedules, storeId, staffList }: TweetsCli
                                 </SelectContent>
                             </Select>
                         </div>
-                        <div className="grid grid-cols-4 items-start gap-4">
-                            <Label className="text-right pt-2 text-[13px]">投稿予定日時</Label>
-                            <div className="col-span-3 flex gap-2">
+                        <div className="space-y-2">
+                            <Label className="text-[13px]">投稿予定日時</Label>
+                            <div className="flex gap-2">
                                 <Input 
                                     type="date" 
-                                    className="text-[13px]"
+                                    className="text-[13px] flex-1"
                                     value={formData.scheduled_date}
                                     onChange={(e) => setFormData({...formData, scheduled_date: e.target.value})}
                                 />
                                 <Input 
                                     type="time" 
-                                    className="text-[13px]"
+                                    className="text-[13px] flex-1"
                                     value={formData.scheduled_time}
                                     onChange={(e) => setFormData({...formData, scheduled_time: e.target.value})}
                                 />
                             </div>
                         </div>
-                        <div className="grid grid-cols-4 items-start gap-4">
-                            <Label className="text-right pt-2 text-[13px]">投稿内容 <span className="text-red-500">*</span></Label>
+                        <div className="space-y-2">
+                            <Label className="text-[13px]">投稿内容 <span className="text-red-500">*</span></Label>
                             <Textarea 
-                                className="col-span-3 min-h-[100px] text-[13px]"
+                                className="w-full min-h-[120px] text-[13px]"
                                 placeholder="ツイート内容を入力..."
                                 value={formData.content}
                                 onChange={(e) => setFormData({...formData, content: e.target.value})}
                             />
-                        </div>
-                        <div className="col-start-2 col-span-3 text-[11px] text-gray-500 mt-[-8px]">
-                            ※残り文字数: {140 - formData.content.length}文字
+                            <div className="text-[11px] text-gray-500 text-right">
+                                ※残り文字数: {140 - formData.content.length}文字
+                            </div>
                         </div>
                     </div>
                     <DialogFooter>
