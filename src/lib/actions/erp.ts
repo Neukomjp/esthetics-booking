@@ -35,8 +35,8 @@ export async function deleteExpenseAction(id: string) {
 // ==================== Payouts ====================
 
 export async function getPayoutsAction(storeId: string, date?: string) {
-    await requireAuth()
-    return await payoutService.getPayouts(storeId, date)
+    const { supabase } = await requireAuth()
+    return await payoutService.getPayouts(storeId, date, supabase)
 }
 
 export async function calculatePayoutsAction(storeId: string, date: string) {
@@ -44,7 +44,7 @@ export async function calculatePayoutsAction(storeId: string, date: string) {
     
     // 1. Get staff for this store
     const { data: staffList } = await supabase.from('staff').select('id, name, back_margin_rate').eq('store_id', storeId)
-    if (!staffList || staffList.length === 0) return await payoutService.getPayouts(storeId, date)
+    if (!staffList || staffList.length === 0) return await payoutService.getPayouts(storeId, date, supabase)
     
     // 2. Get bookings for this date (start_time within date)
     // Create Date objects to span the whole target day in UTC or local (assuming local date string 'yyyy-MM-dd')
@@ -97,16 +97,16 @@ export async function calculatePayoutsAction(storeId: string, date: string) {
             deduction_reason: null,
             total_amount: totalAmount,
             is_paid: false
-        })
+        }, supabase)
     }
     
     revalidatePath('/dashboard/guarantees')
-    return await payoutService.getPayouts(storeId, date)
+    return await payoutService.getPayouts(storeId, date, supabase)
 }
 
 export async function markPayoutAsPaidAction(id: string) {
-    await requireAuth()
-    await payoutService.markAsPaid(id)
+    const { supabase } = await requireAuth()
+    await payoutService.markAsPaid(id, supabase)
     revalidatePath('/dashboard/guarantees')
 }
 

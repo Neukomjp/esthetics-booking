@@ -18,8 +18,9 @@ export type DailyPayout = {
 }
 
 export const payoutService = {
-    async getPayouts(storeId: string, date?: string) {
-        const supabase = createClient()
+    async getPayouts(storeId: string, date?: string, customClient?: unknown) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const supabase = (customClient as any) || createClient()
         let query = supabase
             .from('daily_payouts')
             .select('*, staff:staff_id(name)')
@@ -33,8 +34,9 @@ export const payoutService = {
         return (data || []) as DailyPayout[]
     },
 
-    async upsertPayout(payout: Omit<DailyPayout, 'id' | 'created_at' | 'updated_at' | 'staff'>) {
-        const supabase = createClient()
+    async upsertPayout(payout: Omit<DailyPayout, 'id' | 'created_at' | 'updated_at' | 'staff'>, customClient?: unknown) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const supabase = (customClient as any) || createClient()
         const { data, error } = await supabase
             .from('daily_payouts')
             .upsert([payout], { onConflict: 'staff_id,payout_date' })
@@ -45,8 +47,9 @@ export const payoutService = {
         return data as DailyPayout
     },
 
-    async markAsPaid(id: string) {
-        const supabase = createClient()
+    async markAsPaid(id: string, customClient?: unknown) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const supabase = (customClient as any) || createClient()
         const { error } = await supabase
             .from('daily_payouts')
             .update({ is_paid: true })
