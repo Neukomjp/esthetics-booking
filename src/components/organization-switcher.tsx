@@ -94,12 +94,14 @@ export function OrganizationSwitcher({ currentOrgId }: { currentOrgId?: string }
             <div className="mb-2 px-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
                 Organization
             </div>
-            <div className="flex gap-2 items-center">
+            <div className="flex gap-2 items-center w-full">
                 <Select value={selectedOrgId} onValueChange={handleOrgChange}>
-                    <SelectTrigger className="w-full">
-                        <div className="flex items-center gap-2 truncate">
-                            <Building2 className="h-4 w-4" />
-                            <SelectValue placeholder="Select Organization" />
+                    <SelectTrigger className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 truncate w-full">
+                            <Building2 className="h-4 w-4 shrink-0" />
+                            <div className="truncate text-left flex-1">
+                                <SelectValue placeholder="Select Organization" />
+                            </div>
                         </div>
                     </SelectTrigger>
                     <SelectContent>
