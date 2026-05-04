@@ -96,5 +96,87 @@ export const salesService = {
         })
 
         return Object.values(aggregation)
+    },
+
+    async getDailySales(storeId: string, days: number = 30): Promise<{ date: string; sales: number; bookings: number }[]> {
+        const supabase = createClient()
+        const now = new Date()
+        const startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() - days + 1).toISOString()
+
+        const { data, error } = await supabase
+            .from('bookings')
+            .select('start_time, total_price')
+            .eq('store_id', storeId)
+            .gte('start_time', startDate)
+            .neq('status', 'cancelled')
+            .order('start_time', { ascending: true })
+
+        if (error) throw new Error(error.message)
+
+        const aggregation: Record<string, { date: string; sales: number; bookings: number }> = {}
+
+        // Initialize last N days
+        for (let i = days - 1; i >= 0; i--) {
+            const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i)
+            const key = `${d.getFullYear()}-${(d.getMonth() + 1).toString().padStart(2, '0')}-${d.getDate().toString().padStart(2, '0')}`
+            aggregation[key] = { date: key, sales: 0, bookings: 0 }
+        }
+
+        data?.forEach((b) => {
+            const d = new Date(b.start_time)
+            const key = `${d.getFullYear()}-${(d.getMonth() + 1).toString().padStart(2, '0')}-${d.getDate().toString().padStart(2, '0')}`
+            if (aggregation[key]) {
+                aggregation[key].sales += (b.total_price || 0)
+                aggregation[key].bookings += 1
+            }
+        })
+
+        return Object.values(aggregation)
+    },
+
+    async getWeeklySales(storeId: string, weeks: number = 12): Promise<{ week: string; sales: number; bookings: number }[]> {
+        const supabase = createClient()
+        const now = new Date()
+        const startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() - (weeks * 7) + 1).toISOString()
+
+        const { data, error } = await supabase
+            .from('bookings')
+            .select('start_time, total_price')
+            .eq('store_id', storeId)
+            .gte('start_time', startDate)
+            .neq('status', 'cancelled')
+            .order('start_time', { ascending: true })
+
+        if (error) throw new Error(error.message)
+
+        const aggregation: Record<string, { week: string; sales: number; bookings: number }> = {}
+
+        // Helper to get Monday of a week
+        const getMonday = (d: Date) => {
+            d = new Date(d)
+            const day = d.getDay()
+            const diff = d.getDate() - day + (day === 0 ? -6 : 1)
+            return new Date(d.setDate(diff))
+        }
+
+        // Initialize last N weeks
+        for (let i = weeks - 1; i >= 0; i--) {
+            const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() - (i * 7))
+            const monday = getMonday(d)
+            const key = `${monday.getFullYear()}-${(monday.getMonth() + 1).toString().padStart(2, '0')}-${monday.getDate().toString().padStart(2, '0')}`
+            aggregation[key] = { week: key, sales: 0, bookings: 0 }
+        }
+
+        data?.forEach((b) => {
+            const d = new Date(b.start_time)
+            const monday = getMonday(d)
+            const key = `${monday.getFullYear()}-${(monday.getMonth() + 1).toString().padStart(2, '0')}-${monday.getDate().toString().padStart(2, '0')}`
+            if (aggregation[key]) {
+                aggregation[key].sales += (b.total_price || 0)
+                aggregation[key].bookings += 1
+            }
+        })
+
+        return Object.values(aggregation)
     }
 }
