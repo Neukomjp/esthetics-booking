@@ -13,6 +13,11 @@ export const PERMISSIONS = {
     VIEW_COUPONS: 'view_coupons',
     VIEW_PAYMENTS: 'view_payments',
     MANAGE_SETTINGS: 'manage_settings',
+    VIEW_REPORTS: 'view_reports',
+    VIEW_EXPENSES: 'view_expenses',
+    VIEW_PAYROLL: 'view_payroll',
+    MANAGE_MARKETING: 'manage_marketing',
+    MANAGE_REGIONS: 'manage_regions',
 } as const
 
 export type Permission = typeof PERMISSIONS[keyof typeof PERMISSIONS]
@@ -29,6 +34,11 @@ const ROLE_PERMISSIONS: Record<OrganizationRole, Permission[]> = {
         PERMISSIONS.VIEW_COUPONS,
         PERMISSIONS.VIEW_PAYMENTS,
         PERMISSIONS.MANAGE_SETTINGS,
+        PERMISSIONS.VIEW_REPORTS,
+        PERMISSIONS.VIEW_EXPENSES,
+        PERMISSIONS.VIEW_PAYROLL,
+        PERMISSIONS.MANAGE_MARKETING,
+        PERMISSIONS.MANAGE_REGIONS,
     ],
     member: [
         PERMISSIONS.VIEW_DASHBOARD,
@@ -71,4 +81,24 @@ export function canViewPayments(role: OrganizationRole): boolean {
 
 export function canManageSettings(role: OrganizationRole): boolean {
     return hasPermission(role, PERMISSIONS.MANAGE_SETTINGS)
+}
+
+export function canViewReports(role: OrganizationRole): boolean {
+    return hasPermission(role, PERMISSIONS.VIEW_REPORTS)
+}
+
+export function canViewExpenses(role: OrganizationRole): boolean {
+    return hasPermission(role, PERMISSIONS.VIEW_EXPENSES)
+}
+
+export function canViewPayroll(role: OrganizationRole): boolean {
+    return hasPermission(role, PERMISSIONS.VIEW_PAYROLL)
+}
+
+export function canManageMarketing(role: OrganizationRole): boolean {
+    return hasPermission(role, PERMISSIONS.MANAGE_MARKETING)
+}
+
+export function canManageRegions(role: OrganizationRole): boolean {
+    return hasPermission(role, PERMISSIONS.MANAGE_REGIONS)
 }

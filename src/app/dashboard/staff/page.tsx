@@ -1,8 +1,8 @@
 import { storeService } from '@/lib/services/stores'
-import { staffService } from '@/lib/services/staff'
 import { StoreSelector } from '@/app/dashboard/bookings/store-selector'
 import { cookies } from 'next/headers'
-import { StaffList } from './staff-list'
+import { StaffManager } from '@/app/dashboard/stores/[id]/staff-manager'
+import { createClient } from '@/lib/supabase/server'
 
 export const dynamic = 'force-dynamic'
 
@@ -14,24 +14,27 @@ export default async function StaffPage(props: Props) {
     const searchParams = await props.searchParams;
     const urlStoreId = searchParams.store as string | undefined;
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let staffList: any[] = [];
     let storeId = '';
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let stores: any[] = [];
 
     const cookieStore = await cookies()
-    const organizationId = cookieStore.get('organization-id')?.value
+    let organizationId = cookieStore.get('organization-id')?.value
+    if (!organizationId) {
+        const { getUserOrganizationsAction } = await import('@/lib/actions/organization')
+        const orgs = await getUserOrganizationsAction()
+        organizationId = orgs[0]?.id
+    }
+    const supabase = await createClient()
 
     try {
-        stores = await storeService.getStores(organizationId);
+        stores = await storeService.getStores(organizationId, supabase);
         if (stores.length > 0) {
             // Use URL param, otherwise fallback to first store
             storeId = urlStoreId && stores.find(s => s.id === urlStoreId) ? urlStoreId : stores[0].id;
-            staffList = await staffService.getStaffByStoreId(storeId);
         }
     } catch (error) {
-        console.error('Failed to fetch staff:', error);
+        console.error('Failed to fetch stores:', error);
     }
 
     return (
@@ -43,8 +46,15 @@ export default async function StaffPage(props: Props) {
                 </div>
             </div>
             
-            {/* The dense list view for staff */}
-            <StaffList initialStaff={staffList} storeId={storeId} />
+            {/* Unified Staff Manager Component */}
+            {storeId ? (
+                <StaffManager storeId={storeId} />
+            ) : (
+                <div className="text-center py-10 text-muted-foreground">
+                    店舗が見つかりません。先に店舗を作成してください。
+                </div>
+            )}
         </div>
     )
 }
+

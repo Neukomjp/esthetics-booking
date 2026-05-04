@@ -3,6 +3,7 @@ import { menuService } from '@/lib/services/menu'
 import { StoreSelector } from '@/app/dashboard/bookings/store-selector'
 import { cookies } from 'next/headers'
 import { ServiceList } from './service-list'
+import { createClient } from '@/lib/supabase/server'
 
 export const dynamic = 'force-dynamic'
 
@@ -21,13 +22,19 @@ export default async function ServicesPage(props: Props) {
     let services: any[] = [];
 
     const cookieStore = await cookies()
-    const organizationId = cookieStore.get('organization-id')?.value
+    let organizationId = cookieStore.get('organization-id')?.value
+    if (!organizationId) {
+        const { getUserOrganizationsAction } = await import('@/lib/actions/organization')
+        const orgs = await getUserOrganizationsAction()
+        organizationId = orgs[0]?.id
+    }
+    const supabase = await createClient()
 
     try {
-        stores = await storeService.getStores(organizationId);
+        stores = await storeService.getStores(organizationId, supabase);
         if (stores.length > 0) {
             storeId = urlStoreId && stores.find(s => s.id === urlStoreId) ? urlStoreId : stores[0].id;
-            services = await menuService.getServicesByStoreId(storeId);
+            services = await menuService.getServicesByStoreId(storeId, supabase);
         }
     } catch (error) {
         console.error('Failed to fetch services:', error);

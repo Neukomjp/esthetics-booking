@@ -8,6 +8,7 @@ import { salesService } from '@/lib/services/sales'
 import { bookingService } from '@/lib/services/bookings'
 import { format } from 'date-fns'
 import { Badge } from '@/components/ui/badge'
+import { createClient } from '@/lib/supabase/server'
 
 export const dynamic = 'force-dynamic'
 
@@ -25,10 +26,11 @@ export default async function DashboardPage() {
         const orgs = await getUserOrganizationsAction()
         orgId = orgs[0]?.id
     }
+    const supabase = await createClient()
 
     if (orgId) {
         try {
-            stores = await storeService.getStores(orgId)
+            stores = await storeService.getStores(orgId, supabase)
         } catch {
             // Using console.log instead of console.error because Turbopack crashes when trying to serialize fetch errors to the dev overlay from Server Components
             console.log('Failed to fetch stores on dashboard, likely due to missing Supabase setup.')

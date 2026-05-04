@@ -4,6 +4,7 @@ import { storeService } from '@/lib/services/stores'
 import { ManualBookingDialog } from './manual-booking-dialog'
 import { StoreSelector } from './store-selector'
 import { startOfMonth, endOfMonth, startOfWeek, endOfWeek } from 'date-fns'
+import { createClient } from '@/lib/supabase/server'
 
 export const dynamic = 'force-dynamic'
 
@@ -24,7 +25,13 @@ export default async function BookingsPage(props: Props) {
     let stores: any[] = [];
 
     const cookieStore = await cookies()
-    const organizationId = cookieStore.get('organization-id')?.value
+    let organizationId = cookieStore.get('organization-id')?.value
+    if (!organizationId) {
+        const { getUserOrganizationsAction } = await import('@/lib/actions/organization')
+        const orgs = await getUserOrganizationsAction()
+        organizationId = orgs[0]?.id
+    }
+    const supabase = await createClient()
 
     const today = new Date()
     // Pre-fetch a range that covers the visible month grid (including prev/next month buffer days)
@@ -32,7 +39,7 @@ export default async function BookingsPage(props: Props) {
     const endDate = endOfWeek(endOfMonth(today), { weekStartsOn: 1 })
 
     try {
-        stores = await storeService.getStores(organizationId);
+        stores = await storeService.getStores(organizationId, supabase);
         if (stores.length > 0) {
             // Use URL param, otherwise fallback to first store
             storeId = urlStoreId && stores.find(s => s.id === urlStoreId) ? urlStoreId : stores[0].id;

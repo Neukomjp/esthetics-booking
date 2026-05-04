@@ -6,7 +6,6 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { StorePageBuilder } from './builder'
 import { BasicInfoEditor } from './basic-info-editor'
-import { StaffManager } from './staff-manager'
 import { NewsManager } from './news-manager'
 import { MenuManager } from './menu-manager'
 import { ShiftManager } from './shift-manager'
@@ -88,7 +87,16 @@ export function StoreEditorTabs({ store, allStores = [], initialTab = 'basic' }:
                             </CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <StaffManager storeId={store.id} />
+                            <div className="text-center py-6 space-y-4">
+                                <p className="text-sm text-gray-500">
+                                    キャストの管理は専用ページに統合されました。
+                                </p>
+                                <Button asChild>
+                                    <Link href={`/dashboard/staff?store=${store.id}`}>
+                                        キャスト管理ページを開く <ExternalLink className="ml-2 h-4 w-4" />
+                                    </Link>
+                                </Button>
+                            </div>
                         </CardContent>
                     </Card>
                 </TabsContent>

@@ -51,10 +51,11 @@ export async function POST(req: Request) {
             // Update Supabase booking status
             const { error } = await supabaseAdmin
                 .from('bookings')
+                // @ts-expect-error: bypassing stale supabase types
                 .update({
                     payment_status: 'paid',
                     status: 'confirmed'
-                })
+                } as any)
                 .eq('id', bookingId)
 
             if (error) {

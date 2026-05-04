@@ -278,7 +278,6 @@ export function ShiftManager({ storeId }: ShiftManagerProps) {
                                             const isAllStaff = selectedMonthStaffId === 'all'
 
                                             // Pre-calculate shift info if it's a single staff member
-                                            let singleStaffShift = null
                                             let singleStaffException = null
                                             let singleIsHoliday = true
 

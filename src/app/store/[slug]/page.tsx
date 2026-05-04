@@ -126,7 +126,7 @@ export default async function StorePublicPage(props: { params: Promise<{ slug: s
                     </nav>
                     <div className="hidden md:block">
                         <Button size="sm" className="bg-gradient-to-r from-amber-500 to-yellow-600 text-black font-bold hover:brightness-110 border-none" asChild>
-                            <Link href="/login/customer">WEB予約</Link>
+                            <Link href={`/store/${params.slug}/reserve`}>WEB予約</Link>
                         </Button>
                     </div>
                 </div>

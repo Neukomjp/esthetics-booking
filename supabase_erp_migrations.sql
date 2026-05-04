@@ -34,11 +34,14 @@ CREATE TABLE IF NOT EXISTS public.expenses (
 );
 
 -- 3. Staff Salary Settings (キャスト給与条件設定)
+-- NOTE: back_margin_rate と nomination_fee_rate は staff テーブルにも同名カラムが存在します。
+-- 現在のシステムでは staff テーブルの値を正として使用しています。
+-- 給与計算モジュール完成時にこちらのテーブルに統合予定です。
 CREATE TABLE IF NOT EXISTS public.staff_salary_settings (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     staff_id UUID NOT NULL REFERENCES public.staff(id) ON DELETE CASCADE,
     hourly_wage INTEGER DEFAULT 0,
-    back_margin_rate NUMERIC(5, 2) DEFAULT 0, -- Percentage (0-100)
+    back_margin_rate NUMERIC(5, 2) DEFAULT 0, -- Percentage (0-100) ※現在は staff.back_margin_rate を正として使用
     nomination_fee_rate NUMERIC(5, 2) DEFAULT 0, -- Percentage (0-100) or fixed amount depending on business logic
     guarantee_daily INTEGER DEFAULT 0, -- 日給保証額
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),

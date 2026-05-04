@@ -279,7 +279,7 @@ export function ReserveClient({ store }: ReserveClientProps) {
                     subject: `【${store.name}】予約確定のお知らせ`,
                     storeId: store.id,
                     type: 'booking_confirmation',
-                    data: { customerName, serviceName, staffName, date: bookingDate.toLocaleDateString(), time, paymentMethod: paymentMethod === 'local' ? '現地決済' : paymentMethod === 'card' ? 'クレジットカード' : 'PayPay', totalPrice, storeName: store.name }
+                    data: { customerName, serviceName, staffName, date: bookingDate.toLocaleDateString(), time, paymentMethod: paymentMethod === 'local' ? '現地決済' : (paymentMethod as string) === 'card' ? 'クレジットカード' : 'PayPay', totalPrice, storeName: store.name }
                 })
             })
 

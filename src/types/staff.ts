@@ -37,6 +37,7 @@ export type Service = {
     buffer_time_before?: number // minutes
     buffer_time_after?: number // minutes
     image_url?: string
+    order_index?: number
 }
 
 export type ServiceOption = {

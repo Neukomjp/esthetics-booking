@@ -19,6 +19,8 @@ interface BookingListProps {
 
 export function BookingList({ initialBookings, storeId }: BookingListProps) {
     const [bookings, setBookings] = useState(initialBookings)
+    const [startDate] = useState(() => format(new Date(), 'yyyy-MM-dd'))
+    const [endDate] = useState(() => format(new Date(Date.now() + 14 * 24 * 60 * 60 * 1000), 'yyyy-MM-dd'))
 
     const formatDateTime = (isoString: string) => {
         if (!isoString) return ''
@@ -54,9 +56,9 @@ export function BookingList({ initialBookings, storeId }: BookingListProps) {
         <div className="space-y-4">
             {/* Filter Bar */}
             <div className="flex flex-wrap items-center gap-2 bg-white p-3 border border-gray-200 rounded-md shadow-sm">
-                <Input type="date" className="w-[140px] h-8 text-[13px]" defaultValue={format(new Date(), 'yyyy-MM-dd')} />
+                <Input type="date" className="w-[140px] h-8 text-[13px]" defaultValue={startDate} />
                 <span className="text-gray-500">〜</span>
-                <Input type="date" className="w-[140px] h-8 text-[13px]" defaultValue={format(new Date(Date.now() + 14 * 24 * 60 * 60 * 1000), 'yyyy-MM-dd')} />
+                <Input type="date" className="w-[140px] h-8 text-[13px]" defaultValue={endDate} />
                 
                 <Select defaultValue="all">
                     <SelectTrigger className="w-[120px] h-8 text-[13px]">

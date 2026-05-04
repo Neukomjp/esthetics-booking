@@ -1,10 +1,12 @@
 import { storeService } from '@/lib/services/stores'
+import { expenseService } from '@/lib/services/expenses'
 import { StoreSelector } from '@/app/dashboard/bookings/store-selector'
 import { cookies } from 'next/headers'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Plus, Edit, Trash2 } from 'lucide-react'
+import { createClient } from '@/lib/supabase/server'
 
 export const dynamic = 'force-dynamic'
 
@@ -20,19 +22,40 @@ export default async function ExpensesPage(props: Props) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let stores: any[] = [];
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const expenses: any[] = []; // Placeholder until API is fully implemented
+    let expenses: any[] = [];
+    let monthlyTotal = 0;
 
     const cookieStore = await cookies()
-    const organizationId = cookieStore.get('organization-id')?.value
+    let organizationId = cookieStore.get('organization-id')?.value
+    if (!organizationId) {
+        const { getUserOrganizationsAction } = await import('@/lib/actions/organization')
+        const orgs = await getUserOrganizationsAction()
+        organizationId = orgs[0]?.id
+    }
+    const supabase = await createClient()
 
     try {
-        stores = await storeService.getStores(organizationId);
+        stores = await storeService.getStores(organizationId, supabase);
         if (stores.length > 0) {
             storeId = urlStoreId && stores.find(s => s.id === urlStoreId) ? urlStoreId : stores[0].id;
-            // Fetch expenses logic would go here
+            const [expenseData, total] = await Promise.all([
+                expenseService.getExpenses(storeId),
+                expenseService.getMonthlyTotal(storeId)
+            ])
+            expenses = expenseData
+            monthlyTotal = total
         }
     } catch (error) {
         console.error('Failed to fetch expenses:', error);
+    }
+
+    const categoryLabels: Record<string, string> = {
+        supplies: '消耗品費',
+        rent: '家賃',
+        utilities: '水道光熱費',
+        transport: '交通費',
+        advertising: '広告宣伝費',
+        other: 'その他',
     }
 
     return (
@@ -66,7 +89,11 @@ export default async function ExpensesPage(props: Props) {
             <div className="grid grid-cols-4 gap-2">
                 <div className="bg-white border border-gray-200 p-3 rounded-md shadow-sm">
                     <div className="text-[12px] text-gray-500 mb-1">今月の経費合計</div>
-                    <div className="text-xl font-bold text-red-600">¥0</div>
+                    <div className="text-xl font-bold text-red-600">¥{monthlyTotal.toLocaleString()}</div>
+                </div>
+                <div className="bg-white border border-gray-200 p-3 rounded-md shadow-sm">
+                    <div className="text-[12px] text-gray-500 mb-1">経費件数</div>
+                    <div className="text-xl font-bold text-blue-600">{expenses.length}件</div>
                 </div>
             </div>
 
@@ -91,9 +118,9 @@ export default async function ExpensesPage(props: Props) {
                         ) : (
                             expenses.map((expense) => (
                                 <TableRow key={expense.id}>
-                                    <TableCell className="text-[13px]">{expense.date}</TableCell>
-                                    <TableCell className="text-[13px]">{expense.category}</TableCell>
-                                    <TableCell className="text-[13px]">{expense.description}</TableCell>
+                                    <TableCell className="text-[13px]">{expense.expense_date}</TableCell>
+                                    <TableCell className="text-[13px]">{categoryLabels[expense.category] || expense.category}</TableCell>
+                                    <TableCell className="text-[13px]">{expense.description || '-'}</TableCell>
                                     <TableCell className="text-right font-medium text-red-600 text-[13px]">¥{expense.amount.toLocaleString()}</TableCell>
                                     <TableCell className="text-center">
                                         <div className="flex items-center justify-center gap-2">

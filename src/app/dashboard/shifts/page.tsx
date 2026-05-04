@@ -5,6 +5,7 @@ import { StoreSelector } from '@/app/dashboard/bookings/store-selector'
 import { cookies } from 'next/headers'
 import { startOfWeek, addDays, format } from 'date-fns'
 import { ShiftMatrix } from './shift-matrix'
+import { createClient } from '@/lib/supabase/server'
 
 export const dynamic = 'force-dynamic'
 
@@ -27,7 +28,13 @@ export default async function ShiftsPage(props: Props) {
     let shiftExceptions: any[] = [];
 
     const cookieStore = await cookies()
-    const organizationId = cookieStore.get('organization-id')?.value
+    let organizationId = cookieStore.get('organization-id')?.value
+    if (!organizationId) {
+        const { getUserOrganizationsAction } = await import('@/lib/actions/organization')
+        const orgs = await getUserOrganizationsAction()
+        organizationId = orgs[0]?.id
+    }
+    const supabase = await createClient()
 
     const today = new Date()
     // Start from Monday
@@ -37,23 +44,23 @@ export default async function ShiftsPage(props: Props) {
     const weekDates = Array.from({ length: 7 }).map((_, i) => addDays(startDate, i))
 
     try {
-        stores = await storeService.getStores(organizationId);
+        stores = await storeService.getStores(organizationId, supabase);
         if (stores.length > 0) {
             storeId = urlStoreId && stores.find(s => s.id === urlStoreId) ? urlStoreId : stores[0].id;
             
             // Fetch staff for this store
-            staffList = await staffService.getStaffByStoreId(storeId);
+            staffList = await staffService.getStaffByStoreId(storeId, supabase);
             
             if (staffList.length > 0) {
                 const staffIds = staffList.map(s => s.id);
                 
                 // Fetch default weekly shifts
-                weeklyShifts = await shiftService.getShiftsByStaffIds(staffIds, storeId);
+                weeklyShifts = await shiftService.getShiftsByStoreId(storeId);
                 
                 // Fetch exceptions for this week
                 const startStr = format(weekDates[0], 'yyyy-MM-dd')
                 const endStr = format(weekDates[6], 'yyyy-MM-dd')
-                shiftExceptions = await shiftService.getExceptionsByStaffIds(staffIds, storeId, startStr, endStr);
+                shiftExceptions = await shiftService.getShiftExceptionsByStoreId(storeId, startStr, endStr);
             }
         }
     } catch (error) {

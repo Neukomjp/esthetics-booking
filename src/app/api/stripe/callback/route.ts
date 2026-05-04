@@ -54,7 +54,8 @@ export async function GET(req: Request) {
         // Update the Supabase organization record with the new stripe_account_id
         const { error: dbError } = await supabaseAdmin
             .from('organizations')
-            .update({ stripe_account_id: connectedAccountId })
+            // @ts-expect-error: bypassing stale supabase types
+            .update({ stripe_account_id: connectedAccountId } as any)
             .eq('id', decodedState.orgId)
 
         if (dbError) {

@@ -158,13 +158,15 @@ export const organizationService = {
         if (profileError || !profile) {
             throw new Error('指定されたメールアドレスのユーザーが見つかりません。先にシステムにサインアップしてもらう必要があります。')
         }
+        
+        const profileId = (profile as any).id;
 
         // 2. Check if already a member
         const { data: existingMember } = await adminSupabase
             .from('organization_members')
             .select('id')
             .eq('organization_id', organizationId)
-            .eq('user_id', profile.id)
+            .eq('user_id', profileId)
             .single()
 
         if (existingMember) {
@@ -176,9 +178,9 @@ export const organizationService = {
             .from('organization_members')
             .insert([{
                 organization_id: organizationId,
-                user_id: profile.id,
+                user_id: profileId,
                 role: role
-            }])
+            }] as any)
             .select()
             .single()
 
