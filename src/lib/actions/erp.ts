@@ -39,6 +39,71 @@ export async function getPayoutsAction(storeId: string, date?: string) {
     return await payoutService.getPayouts(storeId, date)
 }
 
+export async function calculatePayoutsAction(storeId: string, date: string) {
+    const { supabase } = await requireAuth()
+    
+    // 1. Get staff for this store
+    const { data: staffList } = await supabase.from('staff').select('id, name, back_margin_rate').eq('store_id', storeId)
+    if (!staffList || staffList.length === 0) return await payoutService.getPayouts(storeId, date)
+    
+    // 2. Get bookings for this date (start_time within date)
+    // Create Date objects to span the whole target day in UTC or local (assuming local date string 'yyyy-MM-dd')
+    const startOfDay = new Date(`${date}T00:00:00+09:00`).toISOString()
+    const endOfDay = new Date(`${date}T23:59:59+09:00`).toISOString()
+    
+    const { data: bookings } = await supabase
+        .from('bookings')
+        .select('staff_id, total_price, cast_back_amount, nomination_fee, status')
+        .eq('store_id', storeId)
+        .gte('start_time', startOfDay)
+        .lte('start_time', endOfDay)
+        .in('status', ['completed', 'confirmed']) // count confirmed/completed
+        
+    // 3. Calculate and upsert
+    for (const staff of staffList) {
+        const staffBookings = bookings?.filter(b => b.staff_id === staff.id) || []
+        
+        let backAmount = 0
+        for (const b of staffBookings) {
+            // Simplified calculation: if cast_back_amount is set, use it. Otherwise use total_price * back_margin_rate
+            if (b.cast_back_amount && b.cast_back_amount > 0) {
+                backAmount += b.cast_back_amount
+            } else {
+                backAmount += b.total_price * ((staff.back_margin_rate || 0) / 100)
+            }
+            backAmount += (b.nomination_fee || 0)
+        }
+        
+        // Lookup salary settings (guarantee) if exists
+        const { data: salarySettings } = await supabase.from('staff_salary_settings').select('*').eq('staff_id', staff.id).maybeSingle()
+        const guarantee = salarySettings?.guarantee_daily || 0
+        const baseAmount = Math.max(guarantee - backAmount, 0) // Guarantee minus back amount? Usually guarantee is base, back is added. Or guarantee is minimum.
+        // Simplified: baseAmount is just daily guarantee if backAmount is lower, but let's just make baseAmount = guarantee and backAmount = backAmount for now.
+        // Actually, if it's a "guarantee" (保証), total should be max(guarantee, backAmount).
+        const actualBase = backAmount < guarantee ? guarantee - backAmount : 0;
+        
+        const totalAmount = actualBase + backAmount
+        
+        // Skip if 0
+        if (totalAmount === 0 && actualBase === 0) continue;
+        
+        await payoutService.upsertPayout({
+            staff_id: staff.id,
+            store_id: storeId,
+            payout_date: date,
+            base_amount: actualBase,
+            back_amount: backAmount,
+            deduction_amount: 0,
+            deduction_reason: null,
+            total_amount: totalAmount,
+            is_paid: false
+        })
+    }
+    
+    revalidatePath('/dashboard/guarantees')
+    return await payoutService.getPayouts(storeId, date)
+}
+
 export async function markPayoutAsPaidAction(id: string) {
     await requireAuth()
     await payoutService.markAsPaid(id)
