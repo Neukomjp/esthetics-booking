@@ -2,15 +2,11 @@
 import { createClient } from '@/lib/supabase/client'
 import { StoreData } from '@/lib/types/store'
 
-import { createClient as createSupabaseClient } from '@supabase/supabase-js'
-
 export const storeService = {
     async getStores(organizationId?: string, customClient?: unknown) {
-        // Use a generic client to avoid strict SSR auth requirements if only reading public/org data
-        const supabase = (customClient as any) || createSupabaseClient(
-            process.env.NEXT_PUBLIC_SUPABASE_URL!,
-            process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-        )
+        // Always use the passed server client or the browser client.
+        // NEVER use Service Role Key here - rely on RLS policies for access control.
+        const supabase = (customClient as any) || createClient()
 
         let query = supabase
             .from('stores')

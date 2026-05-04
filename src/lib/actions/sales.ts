@@ -1,6 +1,6 @@
 'use server'
 
-import { createClient } from '@/lib/supabase/server'
+import { createClient, requireAuth } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { canViewPayments } from '@/lib/rbac'
 import { organizationService } from '@/lib/services/organizations'
@@ -21,7 +21,7 @@ export type RecentTransaction = {
 
 export async function getDashboardSalesSummaryAction(storeId: string): Promise<DashboardSalesSummary> {
     try {
-        const supabase = await createClient()
+        const { supabase } = await requireAuth()
 
         const now = new Date()
         const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString()
@@ -55,7 +55,7 @@ export async function getDashboardSalesSummaryAction(storeId: string): Promise<D
 
 export async function getRecentTransactionsAction(storeId: string): Promise<RecentTransaction[]> {
     try {
-        const supabase = await createClient()
+        const { supabase } = await requireAuth()
 
         const { data, error } = await supabase
             .from('bookings')

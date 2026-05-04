@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
@@ -58,22 +57,23 @@ export default function SettingsPage() {
                 </TabsList>
 
                 <TabsContent value="profile" className="space-y-4">
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>アカウント設定</CardTitle>
-                            <CardDescription>あなたのアカウント情報を管理します。</CardDescription>
-                        </CardHeader>
-                        <CardContent className="space-y-4">
+                    <div className="bg-white border border-gray-200 rounded-sm shadow-sm p-6">
+                        <div className="mb-6 pb-4 border-b border-gray-100">
+                            <h3 className="text-[16px] font-bold text-gray-800">アカウント設定</h3>
+                            <p className="text-[13px] text-gray-500 mt-1">あなたのアカウント情報を管理します。</p>
+                        </div>
+                        
+                        <div className="space-y-4 max-w-md">
                             <div className="grid gap-2">
-                                <Label htmlFor="email">メールアドレス</Label>
-                                <Input id="email" value={email} disabled />
-                                <p className="text-xs text-muted-foreground">メールアドレスの変更は現在サポートされていません。</p>
+                                <Label htmlFor="email" className="text-[13px] font-bold">メールアドレス</Label>
+                                <Input id="email" value={email} disabled className="h-8 text-[13px] bg-gray-50" />
+                                <p className="text-[11px] text-gray-500">メールアドレスの変更は現在サポートされていません。</p>
                             </div>
-                        </CardContent>
-                    </Card>
+                        </div>
+                    </div>
 
                     <div className="flex justify-end">
-                        <Button onClick={handleUpdateProfile}>変更を保存</Button>
+                        <Button onClick={handleUpdateProfile} className="h-8 px-4 bg-[#4CAF50] hover:bg-[#45a049] text-white text-[13px] font-bold">変更を保存</Button>
                     </div>
                 </TabsContent>
 

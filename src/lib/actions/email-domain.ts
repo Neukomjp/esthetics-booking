@@ -1,12 +1,13 @@
 'use server'
 
 import { Resend } from 'resend'
-import { createClient } from '../supabase/server'
+import { createClient, requireAuth } from '../supabase/server'
 import { updateStoreAction } from './store'
 
 const resend = new Resend(process.env.RESEND_API_KEY || 're_123456')
 
 export async function addCustomDomainAction(storeId: string, domainName: string) {
+    await requireAuth()
     if (!process.env.RESEND_API_KEY) {
         throw new Error('Resend API key is missing. Contact system administrator.')
     }
@@ -53,6 +54,7 @@ export async function addCustomDomainAction(storeId: string, domainName: string)
 }
 
 export async function checkDomainStatusAction(storeId: string, domainId: string) {
+    await requireAuth()
     if (!process.env.RESEND_API_KEY) {
         throw new Error('Resend API key is missing. Contact system administrator.')
     }
@@ -88,6 +90,7 @@ export async function checkDomainStatusAction(storeId: string, domainId: string)
 }
 
 export async function verifyDomainAction(domainId: string) {
+    await requireAuth()
     if (!process.env.RESEND_API_KEY) {
         throw new Error('Resend API key is missing.')
     }

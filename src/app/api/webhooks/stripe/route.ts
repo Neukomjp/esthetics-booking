@@ -1,18 +1,16 @@
 import { NextResponse } from 'next/server'
 import { stripe } from '@/lib/stripe'
-import { createClient } from '@supabase/supabase-js'
+import { getAdminClient } from '@/lib/supabase/admin'
 
 export async function POST(req: Request) {
     // We need an admin client to bypass RLS in the background webhook
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
-
-    if (!supabaseUrl || !serviceRoleKey) {
-        console.error('Missing Supabase credentials for Webhooks')
+    let supabaseAdmin;
+    try {
+        supabaseAdmin = getAdminClient()
+    } catch (e) {
+        console.error('Failed to initialize admin client:', e)
         return NextResponse.json({ message: 'Server configuration error' }, { status: 500 })
     }
-
-    const supabaseAdmin = createClient(supabaseUrl, serviceRoleKey)
 
     const rawBody = await req.text()
     const signature = req.headers.get('stripe-signature') as string
@@ -25,7 +23,12 @@ export async function POST(req: Request) {
 
     try {
         if (!webhookSecret) {
-            console.warn('⚠️ STRIPE_WEBHOOK_SECRET is not set. Bypassing signature verification. DO NOT DO THIS IN PRODUCTION.')
+            // In production, signature verification is MANDATORY
+            if (process.env.NODE_ENV === 'production') {
+                console.error('❌ STRIPE_WEBHOOK_SECRET is not set in production. Rejecting webhook.')
+                return NextResponse.json({ message: 'Webhook secret not configured' }, { status: 500 })
+            }
+            console.warn('⚠️ STRIPE_WEBHOOK_SECRET is not set. Bypassing signature verification (DEV ONLY).')
             event = JSON.parse(rawBody)
         } else {
             event = stripe.webhooks.constructEvent(rawBody, signature, webhookSecret)

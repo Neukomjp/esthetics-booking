@@ -5,6 +5,7 @@ import { bookingService } from '@/lib/services/bookings'
 import { revalidatePath, unstable_noStore } from 'next/cache'
 
 import { createClient } from '@/lib/supabase/server'
+import { requireAuth } from '@/lib/supabase/server'
 
 export async function getAvailableTimeSlotsAction(
     storeId: string,
@@ -162,6 +163,7 @@ export async function createBookingAction(payload: any) {
 }
 
 export async function updateStatusAction(id: string, status: 'pending' | 'confirmed' | 'cancelled' | 'completed') {
+    await requireAuth()
     await bookingService.updateStatus(id, status)
     revalidatePath(`/dashboard/bookings`)
 }
@@ -198,13 +200,14 @@ export async function cancelBookingAction(bookingId: string) {
 }
 
 export async function updateBookingAction(id: string, updates: any) {
+    await requireAuth()
     const result = await bookingService.updateBooking(id, updates)
     revalidatePath(`/dashboard/bookings`)
     return result
 }
 
 export async function deleteBookingAction(id: string) {
-    const supabase = await createClient()
+    const { supabase } = await requireAuth()
     await bookingService.deleteBooking(id, supabase)
     revalidatePath(`/dashboard/bookings`)
 }

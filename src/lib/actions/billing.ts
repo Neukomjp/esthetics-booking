@@ -1,11 +1,12 @@
 'use server'
 
-import { createClient } from '@/lib/supabase/server'
+import { createClient, requireAuth } from '@/lib/supabase/server'
 import { stripe } from '@/lib/stripe'
 import { getOrganizationAction } from '@/lib/actions/organization'
 
 export async function createBillingPortalSessionAction() {
     try {
+        await requireAuth()
         const supabase = await createClient()
 
         // 1. Get the current user's active organization

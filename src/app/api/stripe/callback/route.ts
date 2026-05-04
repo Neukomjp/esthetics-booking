@@ -1,19 +1,17 @@
 import { NextResponse } from 'next/server'
 import { stripe } from '@/lib/stripe'
-import { createClient } from '@supabase/supabase-js'
+import { getAdminClient } from '@/lib/supabase/admin'
 
 export async function GET(req: Request) {
     try {
         // We need an admin client to update the store securely since this is a callback
-        const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-        const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
-
-        if (!supabaseUrl || !serviceRoleKey) {
-            console.error('Missing Supabase credentials for Callback')
+        let supabaseAdmin;
+        try {
+            supabaseAdmin = getAdminClient()
+        } catch (e) {
+            console.error('Failed to initialize admin client:', e)
             return NextResponse.json({ message: 'Server configuration error' }, { status: 500 })
         }
-
-        const supabaseAdmin = createClient(supabaseUrl, serviceRoleKey)
 
         const { searchParams } = new URL(req.url)
         const code = searchParams.get('code')

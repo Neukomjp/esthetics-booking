@@ -1,14 +1,14 @@
 /* eslint-disable @next/next/no-img-element */
 import { customerService } from '@/lib/services/customers'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { StoreSelector } from '@/app/dashboard/bookings/store-selector'
 import Link from 'next/link'
 import { UserPlus } from 'lucide-react'
 import { cookies } from 'next/headers'
 import { canViewCustomers } from '@/lib/rbac'
 
-import { CustomerSearch } from './customer-search'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
 
 type Props = {
     searchParams: Promise<{ q?: string }>
@@ -28,20 +28,19 @@ export default async function CustomersPage(props: Props) {
         orgId = orgs[0]?.id
     }
 
-    let storeId: string | null = cookieStore.get('store-id')?.value || null
+    let storeId: string = cookieStore.get('store-id')?.value || ''
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let stores: any[] = []
 
     // Validate that the storeId actually belongs to this organization
     if (orgId) {
         const { storeService } = await import('@/lib/services/stores')
-        const stores = await storeService.getStores(orgId)
+        stores = await storeService.getStores(orgId)
         const validStoreIds = stores.map(s => s.id)
 
-        // If the cookie's storeId is missing or doesn't belong to this org, use the org's first store
         if (!storeId || !validStoreIds.includes(storeId)) {
-            storeId = stores.length > 0 ? stores[0].id : null
+            storeId = stores.length > 0 ? stores[0].id : ''
         }
-    } else {
-        storeId = null
     }
 
     // Role check logic
@@ -71,92 +70,99 @@ export default async function CustomersPage(props: Props) {
 
     return (
         <div className="space-y-6">
-            <div className="flex items-center justify-between">
-                <h1 className="text-3xl font-bold tracking-tight">顧客管理</h1>
-                <Button asChild>
-                    <Link href="/dashboard/customers/new">
-                        <UserPlus className="mr-2 h-4 w-4" />
-                        顧客登録
-                    </Link>
-                </Button>
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div className="flex items-center gap-6">
+                    <h1 className="text-3xl font-bold tracking-tight">顧客管理</h1>
+                    <StoreSelector stores={stores} currentStoreId={storeId} />
+                </div>
             </div>
 
-            <Card>
-                <CardHeader>
-                    <CardTitle>顧客一覧</CardTitle>
-                    <CardDescription>
-                        登録されている顧客情報を管理します。
-                    </CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <div className="flex items-center gap-4 mb-6">
-                        <CustomerSearch />
-                    </div>
+            <div className="flex flex-wrap items-center gap-2 bg-white p-3 border border-gray-200 rounded-md shadow-sm">
+                <Input 
+                    type="text" 
+                    placeholder="名前・電話番号で検索..." 
+                    className="w-[200px] h-8 text-[13px]" 
+                    defaultValue={query || ''}
+                />
+                <Button className="h-8 px-4 bg-gray-100 text-gray-700 hover:bg-gray-200 text-[13px] border border-gray-300">絞り込み</Button>
+                
+                <div className="ml-auto">
+                    <Button asChild className="h-8 px-4 bg-[#4CAF50] hover:bg-[#45a049] text-white text-[13px] font-bold">
+                        <Link href="/dashboard/customers/new">
+                            <UserPlus className="mr-1 h-4 w-4" /> 顧客登録
+                        </Link>
+                    </Button>
+                </div>
+            </div>
 
-                    <div className="rounded-md border overflow-x-auto">
-                        <Table className="min-w-max">
-                            <TableHeader>
-                                <TableRow>
-                                    <TableHead>名前</TableHead>
-                                    <TableHead>連絡先</TableHead>
-                                    <TableHead>会員状態</TableHead>
-                                    <TableHead>最終来店日</TableHead>
-                                    <TableHead className="text-right">来店回数</TableHead>
-                                    <TableHead className="text-right">操作</TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {customers.map((customer) => (
-                                    <TableRow key={customer.id}>
-                                        <TableCell className="font-medium">
-                                            <div className="flex items-center gap-3">
-                                                <div className="h-8 w-8 rounded-full bg-slate-100 flex items-center justify-center overflow-hidden">
-                                                    {customer.avatar_url ? (
-                                                        <img src={customer.avatar_url} alt={customer.name} className="h-full w-full object-cover" />
-                                                    ) : (
-                                                        <span className="text-xs font-medium text-slate-500">{customer.name.slice(0, 1)}</span>
-                                                    )}
-                                                </div>
-                                                <div>
-                                                    <div>{customer.name}</div>
-                                                    {customer.name_kana && <div className="text-xs text-muted-foreground">{customer.name_kana}</div>}
-                                                </div>
-                                            </div>
-                                        </TableCell>
-                                        <TableCell>
-                                            <div className="text-sm">{customer.email}</div>
-                                            <div className="text-sm text-muted-foreground">{customer.phone}</div>
-                                        </TableCell>
-                                        <TableCell>
-                                            <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${customer.is_registered ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800'}`}>
-                                                {customer.is_registered ? '会員' : 'ゲスト'}
-                                            </span>
-                                        </TableCell>
-                                        <TableCell>
-                                            {customer.last_visit_date ? new Date(customer.last_visit_date).toLocaleDateString('ja-JP') : '-'}
-                                        </TableCell>
-                                        <TableCell className="text-right">{customer.total_visits}回</TableCell>
-                                        <TableCell className="text-right">
-                                            <Button variant="ghost" size="sm" asChild>
-                                                <Link href={`/dashboard/customers/${customer.id}`}>
-                                                    詳細
-                                                </Link>
-                                            </Button>
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
-                                {customers.length === 0 && (
-                                    <TableRow>
-                                        <TableCell colSpan={6} className="h-24 text-center">
-                                            顧客データが見つかりません
-                                        </TableCell>
-                                    </TableRow>
-                                )}
-                            </TableBody>
-                        </Table>
-                    </div>
-                </CardContent>
-            </Card>
+            <div className="text-sm text-gray-600 mb-2">
+                {customers.length}件中 1-{customers.length}件 を表示
+            </div>
+
+            <div className="border border-gray-300 rounded-sm bg-white shadow-sm overflow-x-auto">
+                <Table className="min-w-max">
+                    <TableHeader>
+                        <TableRow>
+                            <TableHead className="w-[40px] text-center"><input type="checkbox" /></TableHead>
+                            <TableHead>名前</TableHead>
+                            <TableHead>連絡先</TableHead>
+                            <TableHead className="text-center">会員状態</TableHead>
+                            <TableHead className="text-center">最終来店日</TableHead>
+                            <TableHead className="text-right">来店回数</TableHead>
+                            <TableHead className="text-center">操作</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        {customers.map((customer) => (
+                            <TableRow key={customer.id}>
+                                <TableCell className="text-center"><input type="checkbox" /></TableCell>
+                                <TableCell className="font-medium">
+                                    <div className="flex items-center gap-2">
+                                        <div className="h-6 w-6 rounded-sm bg-slate-100 flex items-center justify-center overflow-hidden">
+                                            {customer.avatar_url ? (
+                                                <img src={customer.avatar_url} alt={customer.name} className="h-full w-full object-cover" />
+                                            ) : (
+                                                <span className="text-[10px] font-medium text-slate-500">{customer.name.slice(0, 1)}</span>
+                                            )}
+                                        </div>
+                                        <div>
+                                            <div className="text-[13px] text-blue-600 font-bold">{customer.name}</div>
+                                            {customer.name_kana && <div className="text-[10px] text-gray-400">{customer.name_kana}</div>}
+                                        </div>
+                                    </div>
+                                </TableCell>
+                                <TableCell>
+                                    <div className="text-[12px]">{customer.phone}</div>
+                                    <div className="text-[11px] text-gray-400">{customer.email}</div>
+                                </TableCell>
+                                <TableCell className="text-center">
+                                    <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium ${customer.is_registered ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800'}`}>
+                                        {customer.is_registered ? '会員' : 'ゲスト'}
+                                    </span>
+                                </TableCell>
+                                <TableCell className="text-center text-[12px] text-gray-600">
+                                    {customer.last_visit_date ? new Date(customer.last_visit_date).toLocaleDateString('ja-JP') : '-'}
+                                </TableCell>
+                                <TableCell className="text-right text-[12px] text-gray-600">{customer.total_visits}回</TableCell>
+                                <TableCell className="text-center">
+                                    <Button variant="ghost" size="sm" asChild className="h-6 text-[11px] text-blue-600 hover:text-blue-800 hover:bg-blue-50">
+                                        <Link href={`/dashboard/customers/${customer.id}`}>
+                                            詳細
+                                        </Link>
+                                    </Button>
+                                </TableCell>
+                            </TableRow>
+                        ))}
+                        {customers.length === 0 && (
+                            <TableRow>
+                                <TableCell colSpan={7} className="h-24 text-center text-gray-500 text-[13px]">
+                                    顧客データが見つかりません
+                                </TableCell>
+                            </TableRow>
+                        )}
+                    </TableBody>
+                </Table>
+            </div>
         </div>
     )
 }

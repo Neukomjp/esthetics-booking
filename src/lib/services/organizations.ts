@@ -143,13 +143,10 @@ export const organizationService = {
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async inviteMember(organizationId: string, email: string, role: string) {
-        // Use the admin client (Service Role Key) specifically for inviting,
+        // Use the centralized admin client (Service Role Key) for inviting,
         // because standard users cannot read other users' emails from the profiles table due to RLS.
-        const { createClient: createSupabaseClient } = await import('@supabase/supabase-js')
-        const adminSupabase = createSupabaseClient(
-            process.env.NEXT_PUBLIC_SUPABASE_URL!,
-            process.env.SUPABASE_SERVICE_ROLE_KEY!
-        )
+        const { getAdminClient } = await import('@/lib/supabase/admin')
+        const adminSupabase = getAdminClient()
 
         // 1. Find user by email from profiles table bypassing RLS
         const { data: profile, error: profileError } = await adminSupabase

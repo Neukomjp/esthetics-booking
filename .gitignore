@@ -39,3 +39,20 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# test/debug files with potentially hardcoded credentials
+test_*.js
+check_rls_*.js
+verify_db.mjs
+test-store.ts
+
+# debug/build log files
+*.log
+build_*.txt
+lint_*.txt
+out_*.txt
+out.txt
+rls_*.txt
+debug_*.json
+verify_out.txt
+logs.txt

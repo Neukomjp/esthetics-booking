@@ -1,17 +1,22 @@
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
-import { Plus, Ticket } from 'lucide-react'
-import { Badge } from '@/components/ui/badge'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { StoreSelector } from '@/app/dashboard/bookings/store-selector'
+import { Input } from '@/components/ui/input'
 import { getCouponsAction } from '@/lib/actions/coupon'
 import { getStoresAction } from '@/lib/actions/store'
 import { CouponToggle } from './coupon-toggle'
 import { cookies } from 'next/headers'
 import { canViewCoupons } from '@/lib/rbac'
+import { Plus } from 'lucide-react'
+import { Badge } from '@/components/ui/badge'
 
-export default async function CouponsPage() {
+export default async function CouponsPage(props: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }) {
     const stores = await getStoresAction()
-    const storeId = stores.length > 0 ? stores[0].id : ''
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const searchParams = await props.searchParams;
+    const urlStoreId = searchParams.store as string | undefined;
+    const storeId = urlStoreId && stores.find(s => s.id === urlStoreId) ? urlStoreId : (stores.length > 0 ? stores[0].id : '')
 
     const cookieStore = await cookies()
     const orgId = cookieStore.get('organization-id')?.value
@@ -42,67 +47,82 @@ export default async function CouponsPage() {
 
     return (
         <div className="space-y-6">
-            <div className="flex items-center justify-between">
-                <div>
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div className="flex items-center gap-6">
                     <h2 className="text-3xl font-bold tracking-tight">クーポン管理</h2>
-                    <p className="text-muted-foreground">集客用のクーポンを発行・管理できます。</p>
+                    <StoreSelector stores={stores} currentStoreId={storeId} />
                 </div>
-                <Button>
-                    <Link href="/dashboard/coupons/new" className="flex items-center">
-                        <Plus className="mr-2 h-4 w-4" /> クーポン作成
-                    </Link>
-                </Button>
             </div>
 
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                {coupons.length === 0 ? (
-                    <div className="col-span-full text-center py-12 bg-white rounded-lg border border-dashed">
-                        <Ticket className="h-12 w-12 mx-auto text-gray-300 mb-4" />
-                        <h3 className="text-lg font-medium text-gray-900">クーポンがありません</h3>
-                        <p className="text-gray-500 mb-6">新しいクーポンを作成して集客に活用しましょう。</p>
-                        <Button variant="outline" asChild>
-                            <Link href="/dashboard/coupons/new">クーポンを作成する</Link>
-                        </Button>
-                    </div>
-                ) : (
-                    coupons.map((coupon) => (
-                        <Card key={coupon.id} className={coupon.is_active ? '' : 'opacity-60'}>
-                            <CardHeader className="pb-2">
-                                <div className="flex justify-between items-start">
-                                    <div className="space-y-1">
-                                        <CardTitle className="text-lg">{coupon.name}</CardTitle>
-                                        <CardDescription className="font-mono text-xs bg-slate-100 p-1 rounded w-fit">
-                                            {coupon.code}
-                                        </CardDescription>
-                                    </div>
-                                    <Badge variant={coupon.is_active ? 'default' : 'secondary'}>
-                                        {coupon.is_active ? '有効' : '停止中'}
-                                    </Badge>
-                                </div>
-                            </CardHeader>
-                            <CardContent>
-                                <div className="space-y-2 text-sm">
-                                    <div className="flex justify-between">
-                                        <span className="text-muted-foreground">割引内容:</span>
-                                        <span className="font-bold text-red-600">
-                                            {coupon.discount_type === 'fixed'
-                                                ? `¥${coupon.discount_amount.toLocaleString()} OFF`
-                                                : `${coupon.discount_amount}% OFF`}
-                                        </span>
-                                    </div>
-                                    <div className="flex justify-between">
-                                        <span className="text-muted-foreground">有効期限:</span>
-                                        <span>{new Date(coupon.expires_at).toLocaleDateString()}</span>
-                                    </div>
+            <div className="flex flex-wrap items-center gap-2 bg-white p-3 border border-gray-200 rounded-md shadow-sm">
+                <Input 
+                    type="text" 
+                    placeholder="クーポン名で検索..." 
+                    className="w-[200px] h-8 text-[13px]" 
+                />
+                <Button className="h-8 px-4 bg-gray-100 text-gray-700 hover:bg-gray-200 text-[13px] border border-gray-300">絞り込み</Button>
+                
+                <div className="ml-auto">
+                    <Button asChild className="h-8 px-4 bg-[#4CAF50] hover:bg-[#45a049] text-white text-[13px] font-bold">
+                        <Link href="/dashboard/coupons/new">
+                            <Plus className="mr-1 h-4 w-4" /> クーポン作成
+                        </Link>
+                    </Button>
+                </div>
+            </div>
 
-                                    <div className="pt-4 flex justify-end">
+            <div className="text-sm text-gray-600 mb-2">
+                {coupons.length}件中 1-{coupons.length}件 を表示
+            </div>
+
+            <div className="border border-gray-300 rounded-sm bg-white shadow-sm overflow-x-auto">
+                <Table className="min-w-max">
+                    <TableHeader>
+                        <TableRow>
+                            <TableHead className="w-[40px] text-center"><input type="checkbox" /></TableHead>
+                            <TableHead>クーポン名・コード</TableHead>
+                            <TableHead className="text-right">割引内容</TableHead>
+                            <TableHead className="text-center">有効期限</TableHead>
+                            <TableHead className="text-center">ステータス</TableHead>
+                            <TableHead className="text-center">操作</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        {coupons.length === 0 ? (
+                            <TableRow>
+                                <TableCell colSpan={6} className="text-center text-gray-500 py-8 text-[13px]">
+                                    クーポンがありません。新しいクーポンを作成して集客に活用しましょう。
+                                </TableCell>
+                            </TableRow>
+                        ) : (
+                            coupons.map((coupon) => (
+                                <TableRow key={coupon.id} className={coupon.is_active ? '' : 'bg-gray-50 opacity-70'}>
+                                    <TableCell className="text-center"><input type="checkbox" /></TableCell>
+                                    <TableCell>
+                                        <div className="font-bold text-blue-600 text-[13px]">{coupon.name}</div>
+                                        <div className="text-[11px] text-gray-500 font-mono mt-0.5">{coupon.code}</div>
+                                    </TableCell>
+                                    <TableCell className="text-right font-bold text-red-600 text-[13px]">
+                                        {coupon.discount_type === 'fixed'
+                                            ? `¥${coupon.discount_amount.toLocaleString()} OFF`
+                                            : `${coupon.discount_amount}% OFF`}
+                                    </TableCell>
+                                    <TableCell className="text-center text-[12px] text-gray-600">
+                                        {new Date(coupon.expires_at).toLocaleDateString()}
+                                    </TableCell>
+                                    <TableCell className="text-center">
+                                        <Badge variant="outline" className={`font-normal text-[11px] px-2 py-0 h-5 ${coupon.is_active ? 'bg-green-50 text-green-700 border-green-200' : 'bg-gray-100 text-gray-600 border-gray-200'}`}>
+                                            {coupon.is_active ? '有効' : '停止中'}
+                                        </Badge>
+                                    </TableCell>
+                                    <TableCell className="text-center">
                                         <CouponToggle id={coupon.id} isActive={coupon.is_active} />
-                                    </div>
-                                </div>
-                            </CardContent>
-                        </Card>
-                    ))
-                )}
+                                    </TableCell>
+                                </TableRow>
+                            ))
+                        )}
+                    </TableBody>
+                </Table>
             </div>
         </div>
     )

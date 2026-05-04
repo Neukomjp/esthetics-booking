@@ -6,10 +6,10 @@ import { revalidatePath } from 'next/cache'
 import { cookies } from 'next/headers'
 import { StoreData } from '@/lib/types/store'
 
-import { createClient } from '@/lib/supabase/server'
+import { requireAuth } from '@/lib/supabase/server'
 
 export async function getStoresAction() {
-    const supabase = await createClient()
+    const { supabase } = await requireAuth()
     let orgId = (await cookies()).get('organization-id')?.value
     if (!orgId) {
         const { getUserOrganizationsAction } = await import('@/lib/actions/organization')
@@ -24,7 +24,7 @@ export async function getStoresAction() {
 
 export async function createStoreAction(name: string, slug: string) {
     try {
-        const supabase = await createClient()
+        const { supabase } = await requireAuth()
 
         let orgId = (await cookies()).get('organization-id')?.value
         if (!orgId) {
@@ -48,7 +48,7 @@ export async function createStoreAction(name: string, slug: string) {
 
 
 export async function updateStoreAction(id: string, updates: Partial<StoreData>) {
-    const supabase = await createClient()
+    const { supabase } = await requireAuth()
     try {
         const result = await storeService.updateStore(id, updates, supabase)
         revalidatePath(`/dashboard/stores/${id}`)
@@ -61,6 +61,6 @@ export async function updateStoreAction(id: string, updates: Partial<StoreData>)
 }
 
 export async function getStoreByIdAction(id: string) {
-    const supabase = await createClient()
+    const { supabase } = await requireAuth()
     return await storeService.getStoreById(id, undefined, supabase)
 }

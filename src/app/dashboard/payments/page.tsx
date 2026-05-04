@@ -1,6 +1,5 @@
 'use client'
 
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
 import { useCurrentOrganization } from '@/hooks/use-current-organization'
@@ -64,76 +63,66 @@ export default function PaymentsPage() {
     }
 
     return (
-        <div className="space-y-6">
-            <h2 className="text-3xl font-bold tracking-tight">決済・売上</h2>
-
-            <div className="grid gap-4 md:grid-cols-3">
-                <Card>
-                    <CardHeader className="pb-2">
-                        <CardTitle className="text-sm font-medium">本日の売上</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold">¥{salesSummary?.todaySales.toLocaleString() || 0}</div>
-                    </CardContent>
-                </Card>
-                <Card>
-                    <CardHeader className="pb-2">
-                        <CardTitle className="text-sm font-medium">決済回数</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold">{salesSummary?.transactionCount || 0}</div>
-                    </CardContent>
-                </Card>
-                <Card>
-                    <CardHeader className="pb-2">
-                        <CardTitle className="text-sm font-medium">平均客単価</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold">¥{salesSummary?.averageTicket.toLocaleString() || 0}</div>
-                    </CardContent>
-                </Card>
+        <div className="space-y-4">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div className="flex items-center gap-6">
+                    <h2 className="text-3xl font-bold tracking-tight">決済・売上レポート</h2>
+                </div>
             </div>
 
-            <Card>
-                <CardHeader>
-                    <CardTitle>決済履歴</CardTitle>
-                    <CardDescription>すべてのチャネルの最近の決済ログ</CardDescription>
-                </CardHeader>
-                <CardContent className="overflow-x-auto">
-                    <Table className="min-w-max">
-                        <TableHeader>
+            <div className="grid grid-cols-3 gap-2">
+                <div className="bg-white border border-gray-200 p-3 rounded-md shadow-sm">
+                    <div className="text-[12px] text-gray-500 mb-1">本日の売上</div>
+                    <div className="text-xl font-bold text-red-600">¥{salesSummary?.todaySales.toLocaleString() || 0}</div>
+                </div>
+                <div className="bg-white border border-gray-200 p-3 rounded-md shadow-sm">
+                    <div className="text-[12px] text-gray-500 mb-1">決済回数</div>
+                    <div className="text-xl font-bold text-blue-600">{salesSummary?.transactionCount || 0}回</div>
+                </div>
+                <div className="bg-white border border-gray-200 p-3 rounded-md shadow-sm">
+                    <div className="text-[12px] text-gray-500 mb-1">平均客単価</div>
+                    <div className="text-xl font-bold text-green-600">¥{salesSummary?.averageTicket.toLocaleString() || 0}</div>
+                </div>
+            </div>
+
+            <div className="text-sm text-gray-600 mb-2">
+                決済履歴 ({recentTx.length}件)
+            </div>
+
+            <div className="border border-gray-300 rounded-sm bg-white shadow-sm overflow-x-auto">
+                <Table className="min-w-max">
+                    <TableHeader>
+                        <TableRow>
+                            <TableHead className="w-[180px]">日時</TableHead>
+                            <TableHead>決済方法</TableHead>
+                            <TableHead className="text-right">金額</TableHead>
+                            <TableHead className="text-center">ステータス</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        {recentTx.length === 0 ? (
                             <TableRow>
-                                <TableHead>日時</TableHead>
-                                <TableHead>決済方法</TableHead>
-                                <TableHead>金額</TableHead>
-                                <TableHead>ステータス</TableHead>
+                                <TableCell colSpan={4} className="text-center text-gray-500 text-[13px] py-8">
+                                    決済履歴がありません
+                                </TableCell>
                             </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {recentTx.length === 0 ? (
-                                <TableRow>
-                                    <TableCell colSpan={4} className="text-center text-gray-500 py-8">
-                                        決済履歴がありません
+                        ) : (
+                            recentTx.map((tx) => (
+                                <TableRow key={tx.id}>
+                                    <TableCell className="text-[12px] text-gray-600">{tx.date}</TableCell>
+                                    <TableCell className="text-[13px]">{tx.method}</TableCell>
+                                    <TableCell className="text-right font-medium text-red-600 text-[13px]">¥{tx.amount.toLocaleString()}</TableCell>
+                                    <TableCell className="text-center">
+                                        <Badge variant="outline" className={`font-normal text-[11px] px-2 py-0 h-5 ${tx.status === 'Success' ? 'bg-blue-50 text-blue-700 border-blue-200' : 'bg-red-50 text-red-700 border-red-200'}`}>
+                                            {tx.status === 'Success' ? '成功' : '失敗'}
+                                        </Badge>
                                     </TableCell>
                                 </TableRow>
-                            ) : (
-                                recentTx.map((tx) => (
-                                    <TableRow key={tx.id}>
-                                        <TableCell>{tx.date}</TableCell>
-                                        <TableCell>{tx.method}</TableCell>
-                                        <TableCell>¥{tx.amount.toLocaleString()}</TableCell>
-                                        <TableCell>
-                                            <Badge variant={tx.status === 'Success' ? 'default' : 'destructive'}>
-                                                {tx.status === 'Success' ? '成功' : '失敗'}
-                                            </Badge>
-                                        </TableCell>
-                                    </TableRow>
-                                ))
-                            )}
-                        </TableBody>
-                    </Table>
-                </CardContent>
-            </Card>
+                            ))
+                        )}
+                    </TableBody>
+                </Table>
+            </div>
         </div>
     )
 }

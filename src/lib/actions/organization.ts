@@ -3,7 +3,7 @@
 import { cookies } from 'next/headers'
 import { revalidatePath } from 'next/cache'
 import { organizationService } from '@/lib/services/organizations'
-import { createClient } from '@/lib/supabase/server'
+import { createClient, requireAuth, requireOrgMember } from '@/lib/supabase/server'
 import { sendEmail } from '@/lib/email'
 
 export async function setOrganizationAction(organizationId: string) {
@@ -59,16 +59,16 @@ export async function getOrganizationMembersAction(organizationId: string) {
 }
 
 export async function updateMemberRoleAction(organizationId: string, memberId: string, newRole: string) {
-    const supabase = await createClient()
-    // Notice: We should ideally verify if the *caller* has 'owner' or 'admin' rights here via RLS or service check.
-    // Assuming RLS or middleware handles authorization, or we can add a basic check.
+    // Verify the caller has owner or admin rights in this organization
+    const { supabase } = await requireOrgMember(organizationId, ['owner', 'admin'])
     await organizationService.updateMemberRole(organizationId, memberId, newRole, supabase)
     revalidatePath('/dashboard/settings')
     return { success: true }
 }
 
 export async function removeMemberAction(organizationId: string, memberId: string) {
-    const supabase = await createClient()
+    // Verify the caller has owner or admin rights in this organization
+    const { supabase } = await requireOrgMember(organizationId, ['owner', 'admin'])
     await organizationService.removeMember(organizationId, memberId, supabase)
     revalidatePath('/dashboard/settings')
     return { success: true }
@@ -76,7 +76,8 @@ export async function removeMemberAction(organizationId: string, memberId: strin
 
 export async function inviteMemberAction(organizationId: string, email: string, role: string) {
     try {
-        const supabase = await createClient()
+        // Verify the caller has owner or admin rights in this organization
+        const { supabase } = await requireOrgMember(organizationId, ['owner', 'admin'])
 
         // 1. Actually invite the member in the database
         await organizationService.inviteMember(organizationId, email, role)
