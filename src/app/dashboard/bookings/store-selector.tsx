@@ -1,6 +1,6 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 
 interface StoreSelectorProps {
@@ -11,8 +11,9 @@ interface StoreSelectorProps {
 
 export function StoreSelector({ stores, currentStoreId }: StoreSelectorProps) {
     const router = useRouter()
+    const pathname = usePathname()
 
-    if (stores.length <= 1) return null
+    if (!stores || stores.length === 0) return null
 
     return (
         <div className="flex items-center gap-2">
@@ -20,7 +21,8 @@ export function StoreSelector({ stores, currentStoreId }: StoreSelectorProps) {
             <Select 
                 value={currentStoreId} 
                 onValueChange={(val) => {
-                    router.push(`/dashboard/bookings?store=${val}`)
+                    const path = pathname || '/dashboard'
+                    router.push(`${path}?store=${val}`)
                 }}
             >
                 <SelectTrigger className="w-[200px] bg-white">
