@@ -30,9 +30,13 @@ export function ReportsClient({ dailySalesData, weeklySalesData, monthlySalesDat
         return <Bar yAxisId="left" dataKey={type} name={name} fill={color} radius={[4, 4, 0, 0]} />
     }
 
-    const customTooltip = (value: number, name: string) => {
+    const formatCurrencyTooltip = (value: number | undefined) =>
+        value === undefined ? '' : `¥${value.toLocaleString()}`
+
+    const customTooltip = (value: number | undefined, name: string | undefined) => {
+        if (value === undefined) return ''
         if (name === '予約件数') return `${value}件`
-        return `¥${value.toLocaleString()}`
+        return formatCurrencyTooltip(value)
     }
 
     const renderSummaryCards = (data: any[], dateKey: string) => {
@@ -131,7 +135,7 @@ export function ReportsClient({ dailySalesData, weeklySalesData, monthlySalesDat
                                     <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} />
                                     <XAxis type="number" tickFormatter={formatYAxis} />
                                     <YAxis dataKey="name" type="category" width={100} tick={{ fontSize: 12 }} />
-                                    <Tooltip formatter={(value: number) => `¥${value.toLocaleString()}`} />
+                                    <Tooltip formatter={formatCurrencyTooltip} />
                                     <Bar dataKey="totalSales" name="総売上" fill="#6366f1" radius={[0, 4, 4, 0]} barSize={20} />
                                 </BarChart>
                             </ResponsiveContainer>
