@@ -68,7 +68,7 @@ export default async function proxy(request: NextRequest) {
 
     if (isProtectedRoute && !user) {
         const url = request.nextUrl.clone()
-        url.pathname = '/login'
+        url.pathname = pathname.startsWith('/mypage') ? '/login/customer' : '/login'
         url.searchParams.set('redirectTo', pathname)
         return NextResponse.redirect(url)
     }

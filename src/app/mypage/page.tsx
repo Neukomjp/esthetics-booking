@@ -3,6 +3,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { toast } from 'sonner'
@@ -11,12 +12,15 @@ import { Calendar as CalendarIcon, Clock, LogOut, User } from 'lucide-react'
 
 import { getCurrentCustomerAction, logoutCustomerAction } from '@/lib/actions/auth'
 import { getBookingsByAuthUserIdAction } from '@/lib/actions/booking'
+import { getMyCounselingCustomersAction } from '@/lib/actions/counseling-sheet'
 
 export default function MyPage() {
     const router = useRouter()
     const [loading, setLoading] = useState(true)
      
     const [bookings, setBookings] = useState<any[]>([])
+    const [counselingCustomers, setCounselingCustomers] = useState<{ id: string; name: string; store_id: string }[]>([])
+    const [loadError, setLoadError] = useState('')
 
     useEffect(() => {
         checkUser()
@@ -24,17 +28,27 @@ export default function MyPage() {
     }, [])
 
     async function checkUser() {
-        const authUser = await getCurrentCustomerAction()
+        try {
+            const authUser = await getCurrentCustomerAction()
 
-        if (!authUser) {
-            router.push('/login/customer')
-            return
+            if (!authUser) {
+                router.push('/login/customer')
+                return
+            }
+
+            const [bookingsData, customersData] = await Promise.all([
+                getBookingsByAuthUserIdAction(authUser.id),
+                getMyCounselingCustomersAction(),
+            ])
+
+            setBookings(bookingsData || [])
+            setCounselingCustomers(customersData)
+            setLoadError('')
+        } catch {
+            setLoadError('マイページを読み込めませんでした。再度お試しください。')
+        } finally {
+            setLoading(false)
         }
-
-        const bookingsData = await getBookingsByAuthUserIdAction(authUser.id)
-
-        setBookings(bookingsData || [])
-        setLoading(false)
     }
 
     async function handleLogout() {
@@ -66,6 +80,26 @@ export default function MyPage() {
                         </Button>
                     </div>
                 </div>
+
+                {loadError && <p className="rounded-md border border-red-200 bg-red-50 p-4 text-sm text-red-700">{loadError}</p>}
+
+                <Card>
+                    <CardHeader>
+                        <CardTitle>カウンセリングシート</CardTitle>
+                        <CardDescription>来店前に体調や症状を入力できます。</CardDescription>
+                    </CardHeader>
+                    <CardContent className="flex flex-wrap gap-2">
+                        {counselingCustomers.length === 0 ? (
+                            <p className="text-sm text-muted-foreground">予約に紐づくお客様情報がまだありません。</p>
+                        ) : counselingCustomers.map(customer => (
+                            <Button key={customer.id} variant="outline" asChild>
+                                <Link href={`/mypage/counseling/${customer.id}`}>
+                                    {bookings.find(booking => booking.customer_id === customer.id)?.store?.name || customer.name} のシートを記入
+                                </Link>
+                            </Button>
+                        ))}
+                    </CardContent>
+                </Card>
 
                 <div className="space-y-4">
                     <h2 className="text-xl font-bold">予約履歴</h2>

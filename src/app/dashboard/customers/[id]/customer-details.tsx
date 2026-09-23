@@ -73,7 +73,10 @@ export function CustomerDetails({ customer: initialCustomer, visitRecords }: Cus
                 <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${customer.is_registered ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800'}`}>
                     {customer.is_registered ? '会員' : 'ゲスト'}
                 </span>
-                <div className="ml-auto">
+                <div className="ml-auto flex flex-wrap gap-2">
+                    <Button variant="outline" asChild>
+                        <Link href={`/dashboard/customers/${customer.id}/counseling`}>カウンセリングシート</Link>
+                    </Button>
                     <Button variant="outline" onClick={handleEditClick} className="flex items-center gap-2">
                         <Edit className="h-4 w-4" /> 情報を編集
                     </Button>
