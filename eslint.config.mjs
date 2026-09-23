@@ -11,6 +11,13 @@ const eslintConfig = defineConfig([
       "@typescript-eslint/no-unused-vars": "warn",
     },
   },
+  {
+    // Root-level diagnostic scripts use CommonJS and are still linted.
+    files: ["test_*.js", "check_*.js", "scratch_*.js"],
+    rules: {
+      "@typescript-eslint/no-require-imports": "off",
+    },
+  },
   // Override default ignores of eslint-config-next.
   globalIgnores([
     // Default ignores of eslint-config-next:
